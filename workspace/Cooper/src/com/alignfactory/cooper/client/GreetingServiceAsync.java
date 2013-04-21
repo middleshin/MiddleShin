@@ -1,4 +1,4 @@
-package com.alignfactory.cooper.client;
+package com.alignfactory.cooper.client; 
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
