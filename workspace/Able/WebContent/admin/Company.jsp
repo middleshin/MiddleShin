@@ -42,7 +42,7 @@
 </tr>
 
 <% 
-	ServiceBorker sb = new 	
+	// ServiceBorker sb = new 	
 	
 %>
 
