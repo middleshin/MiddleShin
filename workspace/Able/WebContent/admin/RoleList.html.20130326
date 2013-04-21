@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Role 정보 관리</title>
+<!--  
+	Role, Menu, View 정보를 관리한다. 
+ -->
+<link REL="stylesheet" type="text/css" href="../alleyStyle.css">
+
+</head>
+
+<body>
+	<div style="border:1px solid grey; height:200px; margin:1px; overflow:auto" >
+	<!--  Role 조회  -->
+	<form id="searchRoleForm" >
+		<!--  Role을 조회하기 위한 서비스명을 정의한다.  -->
+		<table>
+		<tr>
+			<td>
+				<input type="hidden" name="serviceName" value="admin.SelectRoleByNm" >	
+			</td>
+			<td>
+				Role Name: <input type="text" id="roleNm"  name="roleNm" >
+			</td>
+			<td>
+				<button id="retrieveRole" type="submit" >조회</button>
+			</td>
+			<td>	
+				<button id="insertRole" type="button" >등록</button>
+			</td>
+		</tr>
+		</table>
+	</form>
+		<table id="roleTable" >
+			<tr align=center valign=top bgcolor=grey >
+				<th width="30px">No</th> 
+				<th width="200px">Role Name</th>
+				<th width="500px">설명</th>
+				<th width="80px">등록일</th>
+				<th style="display:none;">roleId</th>
+			</tr>
+		</table>
+	</div>
+
+<!--  
+	Retrieve Menu  
+-->
+	<div style="border:1px solid grey; height:300px; margin:1px; overflow:auto" >
+		<form id="searchMenuForm" >
+			<input type="hidden" name="serviceName" value="admin.SelectRoleMenuByRoleId" >
+			<table>
+			<tr>
+				<td> <input id="selectedRoleId" name="selectedRoleId" value="" > </td>
+				<td> 메뉴 필터:  
+					<input type="radio" name="menuFilter" value="all" checked> 전체
+					<input type="radio" name="menuFilter" value="selected"> 선택 
+				</td>
+				<td><button id="retrieveMenu" type="submit" >조회</button></td>
+				<td><button id="insertMenu" type="button" >등록</button></td>
+			</tr>
+			</table>
+		</form>
+		
+		<table id="menuTable" >
+			<tr align=center valign=top bgcolor=grey >
+				<th width="30px">No</th>
+				<th width="30px">선택</th>
+				<th width="200px">메뉴명</th>
+				<th width="500px">메뉴설명</th>
+				<th width="100px">등록일</th>
+				<th style="display:none;">menuId</th>
+			</tr>
+		</table>
+	</div>
+</body>
+
+<script type="text/javascript" src="../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" >
+
+$(document).ready(function(){
+
+	$("#searchRoleForm").submit(function(event){
+		retrieveRole(); 
+		return false; // 이게 없으면 페이지가 Reset된다. 
+	});
+
+	$("#insertRole").click(function(event) {
+		parent.openFrame(event, 500, 350, "./admin/RoleManager.jsp");
+	}); 
+
+	$("#searchMenuForm").submit(function(event){
+		if($("#selectedRoleId").val() == ""){
+			alert("선택된 Role이 없습니다."); 
+		}
+		else {
+			retrieveMenu();	
+		}
+		 
+		return false; // 이게 없으면 페이지가 Reset된다. 
+	});
+
+	$("#insertMenu").click(function(event) {
+		parent.openFrame(event, 500, 350, "./admin/MenuManager.jsp");
+	}); 
+
+});
+
+function retrieveRole(){
+	
+	$("#roleTable tr:gt(0)").remove();
+	$("#menuTable tr:gt(0)").remove();
+	$("#selectedRoleId").val("");
+	
+	$.getJSON("../service.jsp", $("#searchRoleForm").serialize(), function(json) {
+		
+		// 메뉴 form 초기화 
+		$("#selectedRoleId").val(null);
+		
+		if(json.code < 0){
+			// error 처리 
+			alert(json.message);
+			return false; 
+		}
+		$.each(json.data, function(key, value) {
+			var addRow = "";
+			addRow 	= "<tr>" 
+						+ "<td>" + (key+1)  + "</td>"
+						+ "<td id='col_string'><a href='#'>" + value.roleNm + "</a></td>"
+						+ "<td id='col_string'>" + value.roleNote + "</td>"
+						+ "<td>" + value.roleRegDt + "</td>"
+						+ "<td style='display:none;'>" + value.roleId + "</td>"
+						+ "</tr>" ; 
+			$("#roleTable tr:last").after(addRow);
+			// 팝업 윈도우 링크 Setting 
+			$("#roleTable tr:last td:nth-child(2)").bind("click",function(event){
+				parent.openFrame(event, 500, 350, "./admin/RoleManager.jsp?roleId=" + value.roleId);
+			});
+		}) ;
+		
+		// parent.resizeContent( $("body").height() );
+		
+		$("#roleTable tr").bind("click",function(event){
+			if(this.rowIndex < 1){
+				return false; 
+			}
+			$('#roleTable tr:not(:first)').css('background-color', 'white'); // 첫행은 그냥둔다. 제목이니깐...
+			$(this).css('background-color', 'yellow');
+ 
+		 	$("#selectedRoleId").val( $(this).children("td:nth-child(5)").text());
+
+		 	retrieveMenu(); 
+		});
+	});
+}
+
+function retrieveMenu(){
+
+	
+	$("#menuTable tr:gt(0)").remove();
+	
+	$.getJSON("../service.jsp", $("#searchMenuForm").serialize(), function(json) {
+		$.each(json.data, function(key, value) {
+			var addRow = "";
+			addRow 	= "<tr>" 
+						+ "<td>" + (key+1) + "</a></td>"
+						+ "<td><input type='checkbox' name='roleMenu' >" + "</td>"
+						+ "<td id='col_string'><a href='#'>" + value.menuModel.menuNm + "</a></td>"
+						+ "<td id='col_string'>" + value.menuModel.menuNote+ "</td>"
+						+ "<td>" + value.menuModel.menuRegDt + "</td>"
+						+ "<td>" + value.menuId + "</td>"
+						+ "</tr>" ; 
+						
+			$("#menuTable tr:last").after(addRow);
+
+			$("#menuTable tr:last td:nth-child(3)").bind("click",function(event){ 
+				parent.openFrame(event, 500, 350, "./admin/MenuManager.jsp?menuId=" + value.menuId ) ;
+				return false;  
+			});
+		});
+		
+		parent.$.resizeContent( $("body").height() + 100 );
+		
+	});
+}
+
+</script>          
+
+</html>
+

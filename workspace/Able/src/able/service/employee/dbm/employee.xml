@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="alley">
+
+
+<select id="selectOrg" parameterType = "able.service.employee.dbm.OrgModel" resultMap="orgResult" >
+	select	org_cd 	orm_org_cd
+	, 		org_nm 	orm_org_nm
+	, 		sta_ymd orm_sta_ymd
+	, 		end_ymd orm_end_ymd
+	from 	orm_org_c
+	order by orm_org_nm
+</select>
+
+<resultMap id="orgResult"		type="able.service.employee.dbm.OrgModel" >
+	<id  	property="ormOrgCd" 	column="orm_org_cd"/>
+	<result property="ormOrgNm"		column="orm_org_nm"/>
+	<result property="ormStaYmd" 	column="orm_sta_ymd"/>
+	<result property="ormEndYmd" 	column="orm_end_ymd"/>
+</resultMap>
+
+</mapper>    

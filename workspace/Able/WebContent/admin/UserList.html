@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>User List</title>
+<link REL="stylesheet" type="text/css" href="../alleyStyle.css">
+<script type="text/javascript" src="../js/jquery-1.7.2.js"></script>
+</head>
+
+<body>
+	<div style="border:1px solid grey; height:200px; margin:1px; overflow:auto" >
+	<!--  회사정보 조회  -->
+	<form id="searchComNm" >
+		<!--  회사정보를 조회하기 위한 서비스명을 정의한다.  -->
+		<input type="hidden" name="serviceName" value="admin.SelectComByNm" >
+		<table>
+		<tr>
+			<td>회사명: <input type="text" id="comLocNm"  name="comLocNm" ></td>
+			<td><button id="selectCom" type="submit" >조회</button></td>
+			<td><button id="insertCom" type="button" >회사등록</button></td>
+		</tr>
+		</table>
+	</form>
+		<table id="comTable" >
+			<tr align=center valign=top bgcolor=grey >
+				<th width="20px">No</th> 
+				<th width="200px">회사명</th>
+				<th width="100px">법인번호</th>
+				<th width="500px">설명</th>
+				<th style="display:none;">ID</th>
+			</tr>
+		</table>
+	</div>
+
+	<!-- 사용자 정보 조회 -->
+	<div style="border:1px solid grey; height:400px; margin:1px; overflow:auto" >
+		<table>
+		<tr>
+			<td>사용자: <input type="text" id="usrNm"  name="usrNm" ></td>
+			<td><button id="selectUsr" type="submit" >조회</button></td>
+			<td><button id="insertUsr" type="button" >등록</button></td>
+		</tr>
+		</table>
+
+		<table id="usrTable" >
+			<tr align=center valign=top bgcolor=grey >
+				<th width="20px">No</th>
+				<th width="150px">성명</th>
+				<th width="200px">로그인(이메일) ID</th>
+				<th width="200px">패스워드</th>
+				<th width="100px">시작일</th>
+				<th width="100px">종료일</th>
+				<th width="400px">설명</th>
+			</tr>
+		</table>
+	</div>
+
+	<!--  
+		Role 정보 관리 
+		- 사용자를 선택하면 해당 사용자에 등록된 Role을 조회한다. 
+		- Check or uncheck 한 후 저장한다. 
+		- 전체를 서버에 던져주면 서버가 알아서 삭제 및 등록(Insert)한다.  
+	
+	-->
+	<div style="border:1px solid grey; height:300px; margin:1px; overflow:auto" >
+		<table>
+		<tr>
+			<td><button id="insertRole" type="button" >선택된 사용자별 Role 적용</button></td>
+		</tr>
+		</table>
+
+		<table id="roleTable" >
+			<tr align=center valign=top bgcolor=grey >
+				<th width="20px">No</th>
+				<th width="30px">선택</th>
+				<th width="150px">Role 명</th>
+				<th width="400px">Role 추가</th>
+			</tr>
+		</table>
+	</div>
+
+</body>
+
+<script type="text/javascript" >
+
+$(document).ready(function(){
+	$("#searchComNm").submit(function(event){
+		retrieveCom(); 
+		return false; // 이게 없으면 페이지가 Reset된다. 
+	});
+
+	$("#insertCom").click(function(event) {
+		parent.openFrame(event, 500, 350, "./admin/CompanyManager.jsp?comId=" + "new");
+	}); 
+
+	$("#insertUsr").click(function(event) {
+		var comId = $("#comTable [selectedRow=true]").children("td:nth-child(5)").text() ; 
+		if(comId == ""){
+			alert("선택된 회사가 없습니다. null "); 
+		}
+		else {
+			parent.openFrame(event, 500, 350, "./admin/UserManager.jsp?comId=" + comId);
+		} 
+	}); 
+
+	$("#selectUsr").click(function(event) {
+		retrieveUsr(); 
+	}); 
+});
+
+function retrieveCom(){
+	$("#comTable tr:gt(0)").remove(); // 첫행을 제외하고 지운다. 
+	
+	$.getJSON("../service.jsp", $("#searchComNm").serialize(), function(json) {
+		if(json.code < 0){
+			// error 처리 
+			alert(json.message);
+			return false; 
+		}
+		
+		$.each(json.data, function(key, value) { // loop  
+			var addRow = "";
+			addRow 	= "<tr>" 
+						+ "<td>" + (key+1)  + "</td>"
+						+ "<td id='col_string'><a href='#'>" + value.comLocNm + "</a></td>"
+						+ "<td>" + value.comBizNo + "</td>"
+						+ "<td id='col_string'>" + value.comNote + "</td>"
+						+ "<td style='display:none;'>" + value.comId + "</td>"
+						+ "</tr>" ; 
+			$("#comTable tr:last").after(addRow);
+
+			// 팝업 윈도우 링크 Setting 
+			$("#comTable tr:last td:nth-child(2)").bind("click",function(event){
+				// openFrame(event, x, y, url, {json Data}); 
+				parent.openFrame(event, 500, 350, "./admin/CompanyManager.jsp?comId=" + value.comId);
+			});
+		});
+		
+		// 회사 선택 시 하는일들 
+		$("#comTable tr").bind("click",function(event){
+
+			if(this.rowIndex < 1){ 
+				// 첫행은 Click 시 그냥둔다. 제목이니깐...
+				return false;
+			}
+			else { 
+				$("#comTable tr:not(:first)").css("background-color", "white"); 
+				$(this).css("background-color", "yellow");
+				
+				// 현재 선택한 행에 대한 attribute를 생성한다. 이전 행은 false로 변경  
+				$("#comTable tr").attr("selectedRow", false);
+				$(this).attr("selectedRow", true);
+				
+				retrieveUsr(); 
+			} 
+			return false;
+		});
+		parent.$.resizeContent($("body").height());
+	});
+}
+
+function retrieveUsr(){
+	$("#usrTable tr:gt(0)").remove();
+	
+	//  현재 선택되어 있는 회사정보를 가져온다. 
+	var comId = $("#comTable [selectedRow=true]").children("td:nth-child(5)").text() ;	
+	if(comId == ""){
+		alert("선택된 회사가 없습니다.");
+		return false ; 
+	}
+
+	$.getJSON("../service.jsp", {serviceName:"admin.SelectUsrByComId", "comId":comId},function(json) {
+		$.each(json.data, function(key, value) {
+			var addRow = "";
+			addRow 	= "<tr>" 
+					+ "<td>" + (key+1) + "</td>"
+					+ "<td id='col_string'><a href='#'>" + value.usrNm+ "</a></td>"
+					+ "<td>" + value.usrLoginId+ "</td>"
+					+ "<td>" + value.usrPasswd+ "</td>"
+					+ "<td>" + value.usrStartDt + "</td>"
+					+ "<td>" + value.usrCloseDt + "</td>"
+					+ "<td>" + value.usrId+ "</td>"
+					+ "</tr>" ; 
+			$("#usrTable tr:last").after(addRow);
+			$("#usrTable tr:last td:nth-child(2)").bind("click",function(event){ 
+				parent.openFrame(event, 500, 350, "./admin/UserManager.jsp?usrId=" + value.usrId);
+			});
+		});
+		
+		$("#usrTable tr").bind("click",function(event){
+			
+			if(this.rowIndex < 1){ 
+				// 첫행은 Click 시 그냥둔다. 제목이니깐...
+				return false;
+			}
+			else { 
+				
+				$("#usrTable tr:not(:first)").css("background-color", "white"); 
+				$(this).css("background-color", "yellow");
+				usrId = $(this).children("td:nth-child(5)").text();
+				retrieveRole(usrId); 
+			} 
+			return false;
+		});
+
+		parent.$.resizeContent( $("body").height() + 100 );
+		
+	});
+}
+
+
+</script>          
+
+</html>
+

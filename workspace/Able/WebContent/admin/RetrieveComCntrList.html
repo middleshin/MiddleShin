@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>회사정보 조회</title>
+</head>
+
+<body>
+
+<table>
+<tr>
+	<td>
+		<form id="searchComNm" >
+		회사찾기: <input type="text" id="searchNm"  name="searchNm" >
+		</form>
+	</td>
+	<td>
+		<button id="retrieveCom" type="button" >Retrieve</button>
+		<button id="insertCom" type="button" >New...</button>
+	</td>
+</tr>
+</table>
+
+<div style="overflow:auto; border:1px solid grey;margin:3px;height:200px">
+	<table id="comList" >
+		<tr align=center valign=top bgcolor=grey >
+			<th>No.</th> 
+			<th>회사명</th>
+			<th>기념일</th>
+			<th>법인번호</th>
+			<th>영문명</th>
+			<th>대표자</th>
+			<th>설명</th>
+		</tr>
+	</table>
+</div>
+
+
+<div style="overflow:auto; border:1px solid grey;margin:3px;height:300px">
+	<table>
+	<tr>
+		<td>
+			회사명: <input type="text" id="ComNm"  name="comNm" >
+		</td>
+		<td>
+			<button id="insertContr" type="button" >New...</button>
+		</td>
+	</tr>
+	</table>
+
+	<table id="contrList">
+		<tr align=center valign=top bgcolor=grey >
+			<th>No.</th> 
+			<th>계약일</th>
+			<th>계약명</th>
+			<th>시작일</th>
+			<th>종료일</th>
+			<th>설명</th>
+		</tr>
+	</table>
+</div>
+
+<div style="overflow:auto; border:1px solid grey;margin:3px;height:600px">
+	<table id="dataTable" >
+		<tr align=center valign=top bgcolor=grey >
+			<th>No.</th> 
+			<th>선택</th>
+			<th>서비스명</th>
+			<th>설명</th>
+		</tr>
+	</table>
+</div>
+
+
+</body>
+
+<link REL="stylesheet" type="text/css" href="../alleyStyle.css">
+<script type="text/javascript" src="../js/jquery-1.7.2.js"></script>
+
+<script type="text/javascript" >
+
+$(document).ready(function(){
+	parent.$.resizeContent( $("body").height());
+	
+	$("#insertCom").click(function(event) {
+		// delete table list gt(0)은 0보다 큰 element를 찾아서 지우는것. 
+		// $("#dataTable tr:gt(0)").remove(); 
+		// parent.$.resizeContent( $("body").height());
+	}); 
+	
+	$("#retrieveCom").click(function(event) {
+		// comList에서 0보다 큰 tr class들을 지운다.
+		// 첫 행만 남기고 모두 지운다. 
+		$("#comList tr:gt(0)").remove();
+		
+		$.getJSON("../service.jsp", {ServiceName:"admin.GetComList"}, function(data) {
+			
+			alert("kk"); 
+			alert(data.json.code + data.json.message);
+			
+			$.each(data.json.data, function(key, value) {
+				var addRow = "";
+				addRow 	= "<tr >" 
+							+ "<td>" + (key + 1)  + "</td>"
+							+ "<td id='col_string'><a href='#'>" + value.comLocNm + "</a></td>"
+							+ "<td>" + value.comAnnivDt + "</td>"
+							+ "<td>" + value.comBizNo + "</td>"
+							+ "<td id='col_string'>" + value.comEngNm + "</td>"
+							+ "<td id='col_string'>" + value.comCeoNm + "</td>"
+							+ "<td id='col_string'>" + value.comNote + "</td>"
+							+ "</tr>" ; 
+							
+				$("#comList tr:last").after(addRow);
+ 
+				// 팝업 윈도우 링크 
+				$("#comList tr:last td:nth-child(2)").bind("click",function(){
+					// parent.$.openFrame(400, 250, "./admin/UpdateCom.jsp?comId=" + value.comId);  
+					parent.$.openFrame(400, 250, "./admin/UpdateCom.html");
+					
+					// parent.$("#popFrame").retrieve(value.comId); 
+					
+					return false; 
+				});
+				
+				// 계약조회 링크
+				// 각 row별로 링크하는 것이 메모리 부담을 줄수 있다. 
+				// -> JQuery 함수로 빼야 한다. => (#tr).click(function(event)....)
+				$("#comList tr:last").bind("click",function(){
+   					$.retrieveContr(value.comId); 
+				});
+
+			}) ;
+			parent.$.resizeContent( $("body").height() ); 
+ 		});
+	}); 	 // end of retrieve 
+
+
+	$.retrieveContr = function(comId){
+		// comList에서 0보다 큰 tr class들을 지운다.
+		// 첫 행만 남기고 모두 지운다. 
+		$("#contrList tr:gt(0)").remove();
+		
+		$.getJSON("../service.jsp", {ServiceName:"admin.GetContrList"}, function(data) {
+			$.each(data.json, function(key, value) {
+				var addRow = "";
+				addRow 	= "<tr >" 
+							+ "<td>" + (key + 1)  + "</td>"
+							+ "<td>" + value.comModel.comName+ "</td>"
+							+ "<td id='col_string'><a href='#'>" + value.contrNm + "</a></td>"
+							+ "<td>" + value.contrStartDt + "</td>"
+							+ "<td>" + value.contrCloseDt + "</td>"
+							+ "<td>" + value.contrNote+ "</td>"
+							+ "</tr>" ; 
+							
+				$("#contrList tr:last").after(addRow);
+ 
+				// 팝업 윈도우 링크 
+				$("#contrList tr:last td:nth-child(2)").bind("click",function(){
+					parent.$.openFrame(400, 400, "./admin/UpdateContr.jsp?contrId=" + value.contrId);  
+				});
+				
+				// 계약조회 링크
+				// 각 row별로 링크하는 것이 메모리 부담을 줄수 있다. 
+				// -> JQuery 함수로 빼야 한다. => (#tr).click(function(event)....)
+				$("#comList tr:last").bind("click",function(){
+   					$.retrieveService(value.comId); 
+				});
+			}) ;
+			parent.$.resizeContent( $("body").height() ); 
+ 		});
+
+	} 
+});
+
+</script>          
+
+</html>

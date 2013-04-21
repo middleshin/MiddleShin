@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="admin">
+
+<!-- Company  -->
+<select id="selectComByName" resultMap="resultCom" parameterType="String" >
+	select	*
+	from com
+	<where>
+	comLocNm like '%' || #{comLocNm} || '%'
+	</where>
+	order by comLocNm
+</select>
+
+<select id="selectComById" resultMap="resultCom" parameterType="Long" >
+	select	*
+	from com
+	where
+	comId = #{comId}
+</select>
+
+<resultMap 	id="resultCom" type="able.service.admin.dbm.ComModel">
+	<!--  	
+		result map에 <result ID= "">가 있으면 ResultMap에 속한 Nested 객체는 중복되어 생성되지 않는다.
+		마지막 행이 덮어쓴다. 	그래서 resultMap에 ID 대신 result를 사용한다. 
+		2013.01.01 신승재,  이거 푸느라고 정월 초하루 부터 하루종일 걸렸당.   
+	-->
+	<result	column="comId"			property="comId"/>
+	<result	column="comLocNm"		property="comLocNm"/>
+	<result	column="comEngNm"		property="comEngNm"/>
+	<result	column="comAnnivDt"		property="comAnnivDt"/>
+	<result	column="comBizNo"		property="comBizNo"/>
+	<result	column="comCeoNm"		property="comCeoNm"/>
+	<result	column="comNote"		property="comNote"/>
+</resultMap>	
+
+<!-- Contract -->
+<select id="selectContrByComId" resultMap="resultContr" parameterType="Long" >
+	select 	*
+	from 	com,
+			contr
+	where 	com.comId = contr.comId
+	and 	com.comId = #{comId}  
+	order by comLocNm, contrSignDt
+</select>
+
+<select id="selectContrById" resultMap="resultContr" parameterType="Long" >
+	select 	*
+	from 	com,
+			contr
+	where 	com.comId = contr.comId
+	and 	contrId = #{contrId}    
+</select>
+
+<select id="selectContrByContrNm" resultMap="resultContr" parameterType="String" >
+	select 	*
+	from 	com,
+			contr
+	where 	com.com_id = contr.com_id
+	<if test="contrNm != null" >
+	and contrNm like #{contrNm}    
+	</if>
+	order by comLocNm, contrSignDt
+</select>
+
+<resultMap 	id="resultContr" type="able.service.admin.dbm.ContrModel">
+	<result	column="contrId" 		property="contrId" />
+	<result	column="comId"			property="comId"/>
+	<result	column="contrNm"		property="contrNm" />
+	<result	column="contrTypeCd"	property="contrTypeCd"/>
+	<result	column="contrSignDt"	property="contrSignDt"/>
+	<result	column="contrStartDt"	property="contrStartDt"/>
+	<result	column="contrCloseDt"	property="contrCloseDt"/>
+	<result	column="contrNote"		property="contrNote"/>
+	<association property="comModel" javaType="able.service.admin.dbm.ComModel" resultMap="resultCom"/>
+</resultMap>
+
+<!-- View  -->
+<select id="selectVuByNm" resultMap="resultVu" parameterType="able.service.admin.dbm.VuModel">
+	select 	*
+	from 	vu
+	<where>
+		<if test="vuNm != null">
+		vuNm like '%' || #{vuNm} || '%' 
+		</if> 
+	</where>
+</select>
+
+<select id="selectVuById" resultMap="resultVu" parameterType="able.service.admin.dbm.VuModel">
+	select 	*
+	from 	vu
+	where	vuId = #{vuId}
+</select>
+
+<resultMap 	id="resultVu" type="able.service.admin.dbm.VuModel">
+	<result	column="vuId"		property="vuId" 	/>
+	<result	column="vuNm"		property="vuNm"	/>
+	<result	column="vuFilePath"	property="vuFilePath"	/>
+	<result	column="vuRegDt"	property="vuRegDt"	/>
+	<result	column="vuNote"		property="vuNote"	/>
+</resultMap>	
+
+<!-- User -->
+<select id="selectUsrByComId" resultMap="resultUsr" parameterType="able.service.admin.dbm.UsrModel">
+	select	*
+	from 	com,usr
+	where	com.comId = usr.comId
+	and 	usr.comId = #{comId}
+ </select>
+
+<select id="selectUsrById" resultMap="resultUsr" parameterType="able.service.admin.dbm.UsrModel">
+	select	*
+	from 	com,usr
+	where	com.comId = usr.comId
+	and 	usrId = #{usrId}
+ </select>
+
+<select id="selectUsrByUsrNm" resultMap="resultUsr" parameterType="able.service.admin.dbm.UsrModel">
+	select	*
+	from 	com,usr
+	where	com.comId = usr.comId
+	<if test = "usrNm != null" > 
+	and 	usrNm like '%' || #{usrNm} || '%'
+	</if>
+ </select>
+
+<resultMap 	id="resultUsr" type="able.service.admin.dbm.UsrModel">
+	<result	column="usrId"			property="usrId" 	/>
+	<result	column="comId"			property="comId"	/>
+	<result	column="usrNm"			property="usrNm"	/>
+	<result	column="usrloginId"		property="usrLoginId"	/>
+	<result	column="usrPasswd"		property="usrPasswd"	/>
+	<result	column="usrStartDt"		property="usrStartDt"	/>
+	<result	column="usrCloseDt"		property="usrCloseDt"	/>	
+	<association property="comModel" javaType="able.service.admin.dbm.ComModel" resultMap="resultCom"/>	
+</resultMap>	
+
+
+<!-- Role -->
+<select id="selectRoleByNm" resultMap="resultRole" parameterType="able.service.admin.dbm.RoleModel" >
+	select 	* 	
+	from 	role 
+	<where>
+	<if test="roleNm != null" > 
+	roleNm like '%' || #{roleNm} || '%'  
+	</if>
+	</where>
+</select>
+
+<select id="selectRoleById" resultMap="resultRole" parameterType="able.service.admin.dbm.RoleModel" >
+	select 	* 	
+	from 	role 
+	where 	roleId = #{roleId}   
+</select>
+
+<resultMap 	id="resultRole" type="able.service.admin.dbm.RoleModel">
+	<result	column="roleId"		property="roleId" 	/>
+	<result	column="roleNm"		property="roleNm"	/>
+	<result	column="roleRegDt"	property="roleRegDt"	/>	
+	<result	column="roleNote"	property="roleNote"	/>
+</resultMap>	
+
+<!-- Menu -->
+<select id="selectMenuByNm" resultMap="resultMenu" parameterType="able.service.admin.dbm.MenuModel" >
+	select 	* 	
+	from 	menu
+	<where>
+	<if test="menuNm != null" > 
+	menuNm like '%' || #{menuNm} || '%'  
+	</if>
+	</where>
+</select>
+
+<select id="selectMenuById" resultMap="resultMenu" parameterType="able.service.admin.dbm.MenuModel" >
+	select 	* 	
+	from 	menu
+	where 	menuId = #{menuId}   
+</select>
+
+<resultMap 	id="resultMenu" type="able.service.admin.dbm.MenuModel">
+	<result	column="menuId"		property="menuId" 	/>
+	<result	column="menuNm"		property="menuNm"	/>
+	<result	column="menuRegDt"	property="menuRegDt"	/>	
+	<result	column="menuSeq"	property="menuSeq"	/>
+	<result	column="menuNote"	property="menuNote"	/>
+</resultMap>
+
+
+<!-- RoleMenu -->
+<select id="selectRoleMenuByAll" resultMap="resultRoleMenu" parameterType="able.service.admin.dbm.RoleMenuModel" >
+	<!--  
+		outer join roleMenu가 없어도 조회될 수 있도록 menuId를 강제로 등록한다. 
+	-->
+	select 	menu.menuId menuId 
+	,		menu.menuNm
+	,		menu.menuSeq
+	,		menu.menuNote
+	,		menu.menuRegDt
+	,		roleMenu.roleMenuId
+	,		roleMenu.roleId
+	,		roleMenu.roleMenuSeq
+	from 	menu,
+			roleMenu
+	where   menu.menuId = roleMenu.menuId(+)
+	and		roleMenu.roleId(+) = #{roleId}  
+	order 	by roleMenuSeq, menuSeq
+</select>
+
+<select id="selectRoleMenuByRoleId" resultMap="resultRoleMenu" parameterType="able.service.admin.dbm.RoleMenuModel" >
+	select 	* 	
+	from 	roleMenu, 
+			menu, 
+			role 
+	where   menu.menuId = roleMenu.menuId
+	and		roleMenu.roleId = role.roleId 
+	and		roleMenu.roleId = #{roleId}  
+	order 	by roleMenuSeq
+</select>
+
+<resultMap 	id="resultRoleMenu" 	type="able.service.admin.dbm.RoleMenuModel">
+	<result	column="roleMenuId" 	property="roleMenuId"/>
+	<result	column="roleId"			property="roleId" 	/>
+	<result	column="menuId"			property="menuId"/>
+	<result	column="roleMenuSeq"	property="roleMenuSeq"	/>
+	<association property="menuModel" javaType="able.service.admin.dbm.MenuModel" resultMap="resultMenu"/>
+	<association property="roleModel" javaType="able.service.admin.dbm.RoleModel" resultMap="resultRole"/>
+</resultMap>	
+
+
+<!--
+<select id="selectContrSvc" resultMap="contrSvcResult" parameterType="able.service.admin.dbm.ContrSvcModel" >
+	select 	
+	from 	com,
+			contr,
+			contr_svc,
+			svc
+	where 	com.com_id 		= contr.com_id
+	and		contr.contr_id	= contr_svc.contr_id
+	and		svc.svc_id		= contr_svc.svc_id
+	<if test="comId != null" > 
+	and com.com_id = #{comId}  
+	</if>
+	<if test="contrId != null" > 
+	and contr.contr_id = #{contrId}  
+	</if>
+	<if test="svcId != null" > 
+	and svc.svc_id = #{svcId}  
+	</if>
+	<if test="svcNm != null" > 
+	and svc.svc_Nm like #{svcNm}  
+	</if>
+</select>
+
+<resultMap 	id="contrSvcResult" type="able.service.admin.dbm.ContrSvcModel">
+	<result	column="contr_svc_id"	property="contrSvcId" 	/>
+	<result	column="contr_id"		property="contrId"	/>
+	<result	column="svc_id"			property="svcId"	/>
+	<association property="contr" javaType="able.service.admin.dbm.ContrModel" resultMap="contrResult"/>
+	<association property="svc" javaType="able.service.admin.dbm.SvcModel" resultMap="svcResult"/>
+</resultMap>	
+
+
+
+<select id="selectRoleSvc" resultMap="roleSvcResult" parameterType="able.service.admin.dbm.RoleSvcModel">
+	select 	*
+	from 	com,
+			contr,
+			svc,
+			contr_svc,
+			role,
+			role_svc
+	where 	com.com_id 		= contr.com_id
+	and		contr.contr_id 	= contr_svc.contr_id
+	and		svc.svc_id 		= contr_svc.svc_id
+	and		com.com_id 		= role.com_id
+	and		role.role_id 	= role_svc.role_id
+	and		contr_svc.contr_svc_id = role_svc.contr_svc_id
+	and		com.com_id 		= #{comId}
+	and		contr.contr_id  = #{contrId}
+	<if test="roleNm != null">
+	and 	role.role_nm = #{roleNm}
+	</if>
+</select>
+
+<resultMap 	id="roleSvcResult" type="able.service.admin.dbm.RoleSvcModel">
+	<result	column="role_svc_id"	property="roleSvcId" 	/>
+	<result	column="role_id"		property="roleId"	/>
+	<result	column="contr_svc_id"	property="contrSvcId"	/>
+	<result	column="role_svc_seq"	property="roleSvcSeq"	/>
+	<association property="contrSvcModel" column="contr_svc_id" javaType="able.service.admin.dbm.ContrSvcModel" resultMap="contrSvcResult"/>
+	<association property="roleModel" 	column="role_id" javaType="able.service.admin.dbm.RoleModel" resultMap="roleResult"/>
+</resultMap>	
+
+<select id="selectUsrRole" resultMap="usrRoleResult" parameterType="able.service.admin.dbm.UsrRoleModel">
+	select 	*
+	from 	com,
+			usr,
+			role,
+			usr_role
+	where 	com.com_id = usr.com_id
+	and		com.com_id = role.com_id
+	and		usr.usr_id = usr_role.usr_id
+	and		role.role_id = usr_role.role_id
+	<if test="roleId != null">
+	and		role.role_id = #{roleId}
+	</if>
+	<if test="usrId != null">
+	and		usr.usr_id = #{usrId}
+	</if>
+</select>
+
+<resultMap 	id="usrRoleResult" type="able.service.admin.dbm.UsrRoleModel">
+	<result	column="usr_role_id"	property="usrRoleId" 	/>
+	<result	column="usr_id"			property="usrId"	/>
+	<result	column="role_id"		property="roleId"	/>
+	<result	column="usr_role_seq"	property="usrRoleSeq"	/>
+	<association property="usrModel" column="usr_id" javaType="able.service.admin.dbm.UsrModel" resultMap="usrResult"/>
+	<association property="roleModel" column="role_id" javaType="able.service.admin.dbm.RoleModel" resultMap="roleResult"/>
+</resultMap>	
+
+
+<select id="selectRoleVu" resultMap="roleVuResult" parameterType="able.service.admin.dbm.RoleVuModel">
+	select 	*
+	from 	com,
+			contr,
+			contr_svc,
+			svc,
+			role,
+			role_svc,
+			role_vu,
+			vu
+	where 	com.com_id 				= contr.com_id
+	and		contr.contr_id 			= contr_svc.contr_id
+	and		contr_svc.svc_id 		= svc.svc_id
+	and		contr_svc.contr_svc_id 	= role_svc.contr_svc_id
+	and		com.com_id 				= role.com_id
+	and		role.role_id 			= role_svc.role_id
+	and		role_svc.role_svc_id 	= role_vu.role_svc_id
+	and		role_vu.vu_id = vu.vu_id
+</select>
+
+<resultMap 	id="roleVuResult" type="able.service.admin.dbm.RoleVuModel">
+	<result	column="role_vu_id"		property="roleVuId" 	/>
+	<result	column="role_svc_id"	property="roleSvcId"	/>
+	<result	column="vu_id"			property="vuId"	/>
+	<association property="roleSvcModel" column="role_svc_id" javaType="able.service.admin.dbm.RoleSvcModel" resultMap="roleSvcResult"/>
+	<association property="vuModel" column="vu_id" javaType="able.service.admin.dbm.VuModel" resultMap="vuResult"/>
+</resultMap>	
+
+<select id="selectSvc" resultMap="svcResult" parameterType="able.service.admin.dbm.SvcModel">
+	select 	*
+	from 	svc
+	<where>
+	<if test="SvcId != null">
+		svc_id like #{svcId}
+	</if>
+	<if test="SvcNm != null">
+		svc_nm like #{svcNm}
+	</if>
+	</where>
+</select>
+
+<resultMap 	id="svcResult" type="able.service.admin.dbm.SvcModel">
+	<result	column="svc_id"		property="svcId" 	/>
+	<result	column="svc_nm"		property="svcNm"	/>
+	<result	column="svc_reg_dt"	property="svcRegDt"	/>
+	<result	column="svc_note"	property="svcNote"	/>
+</resultMap>	
+
+<select id="selectSvcVu" resultMap="svcVuResult" parameterType="able.service.admin.dbm.SvcVuModel">
+	select 	*
+	from 	svc, 
+			vu, 
+			svc_vu
+	where 	svc.svc_id = svc_vu.svc_id
+	and		vu.vu_id = svc_vu.vu_id
+	<if test="SvcId != null">
+	and	svc_id = #{svcId}
+	</if>
+</select>
+
+<resultMap 	id="svcVuResult" type="able.service.admin.dbm.SvcVuModel">
+	<result	column="svc_vu_id"	property="svcVuId" 	/>
+	<result	column="svc_id"		property="svcId"	/>
+	<result	column="vu_id"		property="vuId"	/>
+	<result	column="svc_vu_seq"	property="svcVuSeq"	/>
+	<association property="scvModel" column="scv_id" javaType="able.service.admin.dbm.SvcModel" resultMap="svcResult"/>
+	<association property="vuModel" column="vu_id" javaType="able.service.admin.dbm.VuModel" resultMap="vuResult"/>
+</resultMap>	
+
+
+
+<select id="selectUsrsTerm" resultMap="roleSvcResult" parameterType="able.service.admin.dbm.RoleSvcModel">
+</select>
+--> 
+
+</mapper>

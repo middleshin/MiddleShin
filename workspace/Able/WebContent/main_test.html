@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Open Align Main Board</title>
+
+	<script type="text/javascript">
+
+		function file_new() {
+			document.getElementById("toto11").src = "getEmpList.jsp"; 
+		} 
+		
+		function file_open() {
+			alert("aa"); 
+			document.getElementById("toto11").src = "null.html"; 
+		} 
+		</script>
+
+</head>
+
+<body>
+
+	<!--  메뉴를 없애고 버튼만 등록한다. <p>를 두고 아래로 페이지를 내린다.  -->
+	<!--  메인화면에서 메뉴를 링크한다.  -->
+	<button type="button" onclick="file_new()">New...</button>
+	<button type="button" onclick="file_open()">Open...</button>
+	<button type="button" onclick="file_save()">Save</button>
+	<button type="button" onclick="edit_cut()">Cut</button>
+	<button type="button" onclick="edit_copy()">Copy</button>
+	<button type="button" onclick="edit_paste()">Paste</button>
+
+	<p>
+	
+	<iframe id="toto11" src="./null.html" width="1024" height="768" ></iframe>
+
+</body>
+
+</html>
+
+
+

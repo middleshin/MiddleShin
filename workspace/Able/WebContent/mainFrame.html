@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Alleys Main Frame</title>
+
+<!-- 
+<link rel="stylesheet" type="text/css" href="frame.css">
+ -->
+ 
+<style TYPE="text/css"> 
+	body {
+		text-align:center ; 
+		font-family:Arial; 
+		font-size:10pt;
+		margin:0 auto ;
+		text-align:center; 
+	}
+	
+	tr {
+		text-align:center ;
+		valign:top ;
+		bgcolor:grey;  
+	}
+	
+	td {
+	}
+
+	iframe {
+
+		/*height:99% ; */ 
+		width:100% ;
+		margin:0px ;
+		padding:0px ; 
+		border:0px ;
+	}
+	#menu {
+		border:1px  solid grey ;
+		float:left ;
+		text-align:left;
+		margin:1px ; 
+		width:150px ; 
+	}
+
+	#content {
+		border:1px  solid grey ;
+		float:left ;
+		margin:1px ; 
+		height:100%; 
+	}
+</style>
+
+<script type="text/javascript" src="./js/jquery-1.7.2.js"></script>
+
+<script type="text/javascript" >
+$(document).ready(function(){
+	$("#create").click(function(event) {
+		$("#popdiv").show();
+		$("#popdiv").position(100, 100)
+		// $(document).scrollTop()
+		 
+
+		//$("#body").style.overflow = 'hidden';
+		 // document.body.style.overflow = 'hidden';
+	 });
+}); 	
+
+function resize(int h){
+	alert(h); 
+	$("#content").height(h); 
+	$("#taskFrame").height($(h);
+} 
+	
+}
+function calcHeight() { 
+	//find the height of the internal page 
+	var the_height= document.getElementById('taskFrame').contentWindow.document.body.scrollHeight ; 
+	//change the height of the iframe 
+	document.getElementById("content").height= the_height+20; document.getElementById("taskFrame").height= the_height+20;
+} 
+</script>  
+  
+</head>
+
+<body >
+	<div >
+	
+	<!-- menu frame  -->
+	<div id="menu" >
+		<div style="text-align:center; ">
+			<img src = "./img/kk.jpg"  style="width:90%; height:90%; border:0.1px  solid grey ; margin-top:5px"  />
+		</div>
+		
+		<!--  메뉴를 보기좋게 하기 위하여 한번 더 싼다. -->
+		<div style="margin:10px; "> 
+			<a href="employee/getEmpList.jsp" target="taskFrame">empList.jsp</a>
+			<p>
+			<a href="http://www.w3schools.com" target="taskFrame">W3Schools</a>
+			<p>
+			<a href="http://www.naver.com" target="taskFrame">logout</a>
+			<p>
+			<button id="create" type="button" >create</button>
+		</div>
+	</div>
+	
+ 	<!--  title & Main Menu  -->
+ 	<div id="content" style="width:1000px; height:100%;" >	
+	
+		 <!--  work frame  -->
+		<div style="margin:0px;">
+			<iframe id="taskFrame" name="taskFrame" src="./employee/getEmpList.jsp" >	</iframe>
+		</div>
+	</div>
+
+	<div id="popdiv" style="position:absolute; text-align:center; background-color:grey; height:100%; width:100%; opacity:0.9; display:none;">
+		test div frame 
+	</div>
+
+</div>
+
+</body>
+
+</html>
+
+
+

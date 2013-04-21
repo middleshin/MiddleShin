@@ -1,0 +1,548 @@
+CREATE TABLE addr
+(
+	addr_id              NUMBER NOT NULL ,
+	addr_parent_id       NUMBER NOT NULL ,
+	addr_nation_cd       VARCHAR2(10) NOT NULL ,
+	addr_zip_cd          VARCHAR2(10) NULL ,
+	addr_zip_nm          VARCHAR2(1000) NULL ,
+	addr_dtl_nm          VARCHAR2(1000) NULL ,
+	addr_full_nm         VARCHAR2(2000) NULL ,
+	addr_reg_dt          DATE NOT NULL ,
+	addr_type_cd         VARCHAR2(10) NOT NULL
+);
+
+
+
+CREATE UNIQUE INDEX pk_addr ON addr
+(addr_id   ASC);
+
+
+
+ALTER TABLE addr
+	ADD CONSTRAINT  pk_addr PRIMARY KEY (addr_id);
+
+
+
+CREATE TABLE cd
+(
+	cd_id                NUMBER NOT NULL ,
+	cd_cls_id            VARCHAR2(10) NOT NULL ,
+	com_id               NUMBER NOT NULL ,
+	cd                   VARCHAR2(10) NOT NULL ,
+	cd_nm                VARCHAR2(100) NOT NULL ,
+	cd_sdt               DATE NOT NULL ,
+	cd_edt               DATE NOT NULL ,
+	cd_sort              VARCHAR2(10) NULL
+);
+
+
+
+CREATE UNIQUE INDEX pk_cd ON cd
+(cd_id   ASC);
+
+
+
+ALTER TABLE cd
+	ADD CONSTRAINT  pk_cd PRIMARY KEY (cd_id);
+
+
+
+CREATE UNIQUE INDEX ak_cd_1 ON cd
+(com_id   ASC,cd_cls_id   ASC,cd   ASC,cd_sdt   ASC);
+
+
+
+ALTER TABLE cd
+ADD CONSTRAINT  ak_cd_1 UNIQUE (com_id,cd_cls_id,cd,cd_sdt);
+
+
+
+CREATE TABLE cd_cls
+(
+	cd_cls_id            VARCHAR2(10) NOT NULL ,
+	cd_cls_nm            VARCHAR2(100) NOT NULL ,
+	cd_cls_desc          VARCHAR2(2000) NULL
+);
+
+
+
+CREATE UNIQUE INDEX pk_cd_cls ON cd_cls
+(cd_cls_id   ASC);
+
+
+
+ALTER TABLE cd_cls
+	ADD CONSTRAINT  pk_cd_cls PRIMARY KEY (cd_cls_id);
+
+
+
+CREATE UNIQUE INDEX ak_cd_cls_1 ON cd_cls
+(cd_cls_nm   ASC);
+
+
+
+ALTER TABLE cd_cls
+ADD CONSTRAINT  ak_cd_cls_1 UNIQUE (cd_cls_nm);
+
+
+
+CREATE TABLE cntr
+(
+	cntr_id              NUMBER NOT NULL ,
+	com_id               NUMBER NOT NULL ,
+	cntr_type_cd         VARCHAR2(10) NOT NULL ,
+	cntr_sign_dt         DATE NOT NULL ,
+	cntr_sdt             DATE NOT NULL ,
+	cntr_edt             DATE NOT NULL ,
+	cntr_nm              VARCHAR2(200) NOT NULL ,
+	cntr_desc            VARCHAR2(2000) NULL
+);
+
+
+
+CREATE UNIQUE INDEX pk_cntr ON cntr
+(cntr_id   ASC);
+
+
+
+ALTER TABLE cntr
+	ADD CONSTRAINT  pk_cntr PRIMARY KEY (cntr_id);
+
+
+
+CREATE UNIQUE INDEX ak_cntr_1 ON cntr
+(cntr_nm   ASC);
+
+
+
+ALTER TABLE cntr
+ADD CONSTRAINT  ak_cntr_1 UNIQUE (cntr_nm);
+
+
+
+CREATE TABLE cntr_svc
+(
+	cntr_svc_id          NUMBER NOT NULL ,
+	cntr_id              NUMBER NOT NULL ,
+	svc_id               NUMBER NOT NULL
+);
+
+
+
+CREATE UNIQUE INDEX pk_cntr_svc ON cntr_svc
+(cntr_svc_id   ASC);
+
+
+
+ALTER TABLE cntr_svc
+	ADD CONSTRAINT  pk_cntr_svc PRIMARY KEY (cntr_svc_id);
+
+
+
+CREATE UNIQUE INDEX ak_cntr_svc_1 ON cntr_svc
+(cntr_id   ASC,svc_id   ASC);
+
+
+
+ALTER TABLE cntr_svc
+ADD CONSTRAINT  ak_cntr_svc_1 UNIQUE (cntr_id,svc_id);
+
+
+
+CREATE TABLE com
+(
+	com_id               NUMBER NOT NULL ,
+	com_loc_nm           VARCHAR2(200) NOT NULL ,
+	com_anniv_ymd        DATE NULL ,
+	com_biz_no           VARCHAR2(100) NOT NULL ,
+	com_eng_nm           VARCHAR2(200) NULL ,
+	com_ceo_nm           VARCHAR2(100) NULL ,
+	com_desc             VARCHAR2(2000) NULL
+);
+
+
+
+CREATE UNIQUE INDEX pk_com ON com
+(com_id   ASC);
+
+
+
+ALTER TABLE com
+	ADD CONSTRAINT  pk_com PRIMARY KEY (com_id);
+
+
+
+CREATE UNIQUE INDEX ak_com_1 ON com
+(com_biz_no   ASC);
+
+
+
+ALTER TABLE com
+ADD CONSTRAINT  ak_com_1 UNIQUE (com_biz_no);
+
+
+
+CREATE UNIQUE INDEX ak_com_2 ON com
+(com_loc_nm   ASC);
+
+
+
+ALTER TABLE com
+ADD CONSTRAINT  ak_com_2 UNIQUE (com_loc_nm);
+
+
+
+CREATE TABLE phone
+(
+	phone_id             NUMBER NOT NULL ,
+	phone_parent_id      NUMBER NULL ,
+	phone_nation_cd      VARCHAR2(10) NOT NULL ,
+	phone_type_cd        VARCHAR2(10) NOT NULL ,
+	phone_num            VARCHAR2(40) NOT NULL ,
+	phone_reg_dt         DATE NOT NULL
+);
+
+
+
+CREATE UNIQUE INDEX pk_phone ON phone
+(phone_id   ASC);
+
+
+
+ALTER TABLE phone
+	ADD CONSTRAINT  pk_phone PRIMARY KEY (phone_id);
+
+
+
+CREATE TABLE rol
+(
+	rol_id               NUMBER NOT NULL ,
+	com_id               NUMBER NOT NULL ,
+	rol_nm               VARCHAR2(200) NOT NULL ,
+	rol_desc             VARCHAR2(2000) NULL
+);
+
+
+
+CREATE UNIQUE INDEX pk_rol ON rol
+(rol_id   ASC);
+
+
+
+ALTER TABLE rol
+	ADD CONSTRAINT  pk_rol PRIMARY KEY (rol_id);
+
+
+
+CREATE UNIQUE INDEX ak_rol_1 ON rol
+(com_id   ASC,rol_nm   ASC);
+
+
+
+ALTER TABLE rol
+ADD CONSTRAINT  ak_rol_1 UNIQUE (com_id,rol_nm);
+
+
+
+CREATE TABLE rol_svc
+(
+	rol_svc_id           NUMBER NOT NULL ,
+	rol_id               NUMBER NOT NULL ,
+	cntr_svc_id          NUMBER NOT NULL
+);
+
+
+
+CREATE UNIQUE INDEX pk_rol_svc ON rol_svc
+(rol_svc_id   ASC);
+
+
+
+ALTER TABLE rol_svc
+	ADD CONSTRAINT  pk_rol_svc PRIMARY KEY (rol_svc_id);
+
+
+
+CREATE UNIQUE INDEX ak_rol_svc_1 ON rol_svc
+(rol_id   ASC,cntr_svc_id   ASC);
+
+
+
+ALTER TABLE rol_svc
+ADD CONSTRAINT  ak_rol_svc_1 UNIQUE (rol_id,cntr_svc_id);
+
+
+
+CREATE TABLE rol_usr
+(
+	rol_usr_id           CHAR(18) NOT NULL ,
+	rol_id               NUMBER NOT NULL ,
+	usr_id               NUMBER NOT NULL
+);
+
+
+
+CREATE UNIQUE INDEX pk_rol_usr ON rol_usr
+(rol_usr_id   ASC);
+
+
+
+ALTER TABLE rol_usr
+	ADD CONSTRAINT  pk_rol_usr PRIMARY KEY (rol_usr_id);
+
+
+
+CREATE UNIQUE INDEX ak_rol_usr_1 ON rol_usr
+(rol_id   ASC,usr_id   ASC);
+
+
+
+ALTER TABLE rol_usr
+ADD CONSTRAINT  ak_rol_usr_1 UNIQUE (rol_id,usr_id);
+
+
+
+CREATE TABLE rol_vu
+(
+	rol_vu_id            NUMBER NOT NULL ,
+	rol_svc_id           NUMBER NOT NULL ,
+	vu_id                NUMBER NOT NULL
+);
+
+
+
+CREATE UNIQUE INDEX pk_rol_vu ON rol_vu
+(rol_vu_id   ASC);
+
+
+
+ALTER TABLE rol_vu
+	ADD CONSTRAINT  pk_rol_vu PRIMARY KEY (rol_vu_id);
+
+
+
+CREATE UNIQUE INDEX ak_rol_vu_1 ON rol_vu
+(rol_svc_id   ASC,vu_id   ASC);
+
+
+
+ALTER TABLE rol_vu
+ADD CONSTRAINT  ak_rol_vu_1 UNIQUE (rol_svc_id,vu_id);
+
+
+
+CREATE TABLE svc
+(
+	svc_id               NUMBER NOT NULL ,
+	svc_nm               VARCHAR2(200) NOT NULL ,
+	svc_reg_dt           DATE NOT NULL ,
+	svc_desc             VARCHAR2(2000) NULL
+);
+
+
+
+CREATE UNIQUE INDEX pk_svc ON svc
+(svc_id   ASC);
+
+
+
+ALTER TABLE svc
+	ADD CONSTRAINT  pk_svc PRIMARY KEY (svc_id);
+
+
+
+CREATE TABLE svc_vu
+(
+	svc_vu_id            NUMBER NOT NULL ,
+	svc_id               NUMBER NOT NULL ,
+	vu_id                NUMBER NOT NULL ,
+	vu_sort              VARCHAR2(10) NULL
+);
+
+
+
+CREATE UNIQUE INDEX pk_svc_vu ON svc_vu
+(svc_vu_id   ASC);
+
+
+
+ALTER TABLE svc_vu
+	ADD CONSTRAINT  pk_svc_vu PRIMARY KEY (svc_vu_id);
+
+
+
+CREATE UNIQUE INDEX ak_svc_vu_1 ON svc_vu
+(svc_id   ASC,vu_id   ASC);
+
+
+
+ALTER TABLE svc_vu
+ADD CONSTRAINT  ak_svc_vu_1 UNIQUE (svc_id,vu_id);
+
+
+
+CREATE TABLE usr
+(
+	usr_id               NUMBER NOT NULL ,
+	usr_nm               VARCHAR2(100) NOT NULL ,
+	com_id               NUMBER NOT NULL ,
+	usr_email            VARCHAR2(100) NOT NULL ,
+	usr_passwd           VARCHAR2(100) NOT NULL ,
+	usr_sdt              DATE NOT NULL ,
+	usr_edt              DATE NOT NULL
+);
+
+
+
+CREATE UNIQUE INDEX pk_usr ON usr
+(usr_id   ASC);
+
+
+
+ALTER TABLE usr
+	ADD CONSTRAINT  pk_usr PRIMARY KEY (usr_id);
+
+
+
+CREATE UNIQUE INDEX ak_usr_1 ON usr
+(usr_email   ASC);
+
+
+
+ALTER TABLE usr
+ADD CONSTRAINT  ak_usr_1 UNIQUE (usr_email);
+
+
+
+CREATE TABLE usr_term
+(
+	usr_trem_id          NUMBER NOT NULL ,
+	usr_id               NUMBER NOT NULL ,
+	usr_reg_dt           DATE NOT NULL ,
+	usr_sdt              DATE NOT NULL ,
+	usr_edt              DATE NOT NULL ,
+	usr_reg_nm           VARCHAR2(100) NULL ,
+	usr_term_desc        VARCHAR2(2000) NULL
+);
+
+
+
+CREATE UNIQUE INDEX pk_usr_term ON usr_term
+(usr_trem_id   ASC);
+
+
+
+ALTER TABLE usr_term
+	ADD CONSTRAINT  pk_usr_term PRIMARY KEY (usr_trem_id);
+
+
+
+CREATE UNIQUE INDEX ak_usr_term_1 ON usr_term
+(usr_id   ASC,usr_reg_dt   ASC);
+
+
+
+ALTER TABLE usr_term
+ADD CONSTRAINT  ak_usr_term_1 UNIQUE (usr_id,usr_reg_dt);
+
+
+
+CREATE TABLE vu
+(
+	vu_id                NUMBER NOT NULL ,
+	vu_nm                VARCHAR2(200) NOT NULL ,
+	vu_reg_dt            DATE NOT NULL ,
+	vu_desc              VARCHAR2(2000) NULL ,
+	vu_file              VARCHAR2(1000) NOT NULL
+);
+
+
+
+CREATE UNIQUE INDEX pk_vu ON vu
+(vu_id   ASC);
+
+
+
+ALTER TABLE vu
+	ADD CONSTRAINT  pk_vu PRIMARY KEY (vu_id);
+
+
+
+ALTER TABLE cd
+	ADD (CONSTRAINT R_19 FOREIGN KEY (cd_cls_id) REFERENCES cd_cls (cd_cls_id) ON DELETE SET NULL);
+
+
+
+ALTER TABLE cd
+	ADD (CONSTRAINT R_20 FOREIGN KEY (com_id) REFERENCES com (com_id) ON DELETE SET NULL);
+
+
+
+ALTER TABLE cntr
+	ADD (CONSTRAINT R_1 FOREIGN KEY (com_id) REFERENCES com (com_id) ON DELETE SET NULL);
+
+
+
+ALTER TABLE cntr_svc
+	ADD (CONSTRAINT R_5 FOREIGN KEY (cntr_id) REFERENCES cntr (cntr_id) ON DELETE SET NULL);
+
+
+
+ALTER TABLE cntr_svc
+	ADD (CONSTRAINT R_6 FOREIGN KEY (svc_id) REFERENCES svc (svc_id) ON DELETE SET NULL);
+
+
+
+ALTER TABLE rol
+	ADD (CONSTRAINT R_8 FOREIGN KEY (com_id) REFERENCES com (com_id) ON DELETE SET NULL);
+
+
+
+ALTER TABLE rol_svc
+	ADD (CONSTRAINT R_11 FOREIGN KEY (rol_id) REFERENCES rol (rol_id) ON DELETE SET NULL);
+
+
+
+ALTER TABLE rol_svc
+	ADD (CONSTRAINT R_18 FOREIGN KEY (cntr_svc_id) REFERENCES cntr_svc (cntr_svc_id) ON DELETE SET NULL);
+
+
+
+ALTER TABLE rol_usr
+	ADD (CONSTRAINT R_13 FOREIGN KEY (rol_id) REFERENCES rol (rol_id) ON DELETE SET NULL);
+
+
+
+ALTER TABLE rol_usr
+	ADD (CONSTRAINT R_14 FOREIGN KEY (usr_id) REFERENCES usr (usr_id) ON DELETE SET NULL);
+
+
+
+ALTER TABLE rol_vu
+	ADD (CONSTRAINT R_21 FOREIGN KEY (rol_svc_id) REFERENCES rol_svc (rol_svc_id) ON DELETE SET NULL);
+
+
+
+ALTER TABLE rol_vu
+	ADD (CONSTRAINT R_23 FOREIGN KEY (vu_id) REFERENCES vu (vu_id) ON DELETE SET NULL);
+
+
+
+ALTER TABLE svc_vu
+	ADD (CONSTRAINT R_16 FOREIGN KEY (svc_id) REFERENCES svc (svc_id) ON DELETE SET NULL);
+
+
+
+ALTER TABLE svc_vu
+	ADD (CONSTRAINT R_17 FOREIGN KEY (vu_id) REFERENCES vu (vu_id) ON DELETE SET NULL);
+
+
+
+ALTER TABLE usr
+	ADD (CONSTRAINT R_15 FOREIGN KEY (com_id) REFERENCES com (com_id) ON DELETE SET NULL);
+
+
+
+ALTER TABLE usr_term
+	ADD (CONSTRAINT R_24 FOREIGN KEY (usr_id) REFERENCES usr (usr_id) ON DELETE SET NULL);
+

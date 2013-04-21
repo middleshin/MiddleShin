@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="admin">
+
+<resultMap	id="AddrResult" type="able.service.admin.dbm.AddrModel">
+	<id 	column="addr_id" 		property="AddrId" 		/>
+	<result	column="addr_parent_id"	property="AddrParentId" />
+	<result	column="addr_nation_cd"	property="AddrNationCd" />
+	<result	column="addr_zip_cd"	property="AddrZipCd" 	/>
+	<result	column="addr_zip_nm"	property="AddrZipNm" 	/>
+	<result	column="addr_dtl_nm"	property="AddrDtlNm" 	/>
+	<result	column="addr_full_nm"	property="AddrFullNm" 	/>
+	<result	column="addr_reg_dt"	property="AddrRegDt" 	/>
+	<result	column="addr_type_cd"	property="AddrTypeCd" 	/>
+</resultMap>	
+
+<select id="selectAddr" parameterType="able.service.admin.dbm.AddrModel"  resultMap="AddrResult" >
+	select 	* 
+	from 	addr
+	<where>
+	<if test="AddrId != null" > 
+		addr_id = #{AddrId} 
+	</if>
+	<if test="AddrParentId != null" > 
+		and	addr_parent_id = #{AddrParentId} 
+	</if>
+	
+	</where>
+</select>
+
+<insert id="insertAddr" parameterType="able.service.admin.dbm.AddrModel" >
+	insert into addr
+	values(	#{AddrId} 
+	,		#{AddrParentId} 
+	,		#{AddrNationCd} 
+	,		#{AddrZipCd} 
+	,		#{AddrZipNm} 
+	,		#{AddrDtlNm} 
+	,		#{AddrFullNm} 
+	,		#{AddrRegDt} 
+	,		#{AddrTypeCd}
+	) 
+</insert>
+
+<update id="updateAddr" parameterType="able.service.admin.dbm.AddrModel" >
+	update addr
+	set		addr_parent_id	= #{AddrParentId} 
+	,		addr_nation_cd	= #{AddrNationCd} 
+	,		addr_zip_cd 	= #{AddrZipCd} 
+	,		addr_zip_nm		= #{AddrZipNm} 
+	,		addr_dtl_nm		= #{AddrDtlNm} 
+	,		addr_full_nm	= #{AddrFullNm} 
+	,		addr_reg_dt		= #{AddrRegDt} 
+	,		addr_type_cd	= #{AddrTypeCd}
+	where 	addr_id = #{AddrId}
+</update>
+
+<delete id="deleteAddr" parameterType="able.service.admin.dbm.AddrModel" >
+	delete from addr
+	where 	addr_id = #{AddrId}
+</delete>
+
+<resultMap id="CdResult" type="able.service.admin.dbm.CdModel">
+	<id 	column="cd_id" 		property="CdId" 	/>
+	<result	column="cd_cls_id"	property="CdClsId"	/>
+	<result	column="com_id"		property="ComId"	/>
+	<result	column="cd"			property="Cd"		/>
+	<result	column="cd_nm"		property="CdNm" 	/>
+	<result	column="cd_sdt"		property="CdSdt" 	/>
+	<result	column="cd_edt"		property="CdEdt" 	/>
+	<result	column="cd_sort"	property="CdSort" 	/>
+</resultMap>	
+
+<select id="selectCd" parameterType="able.service.admin.dbm.CdModel" resultMap="CdResult" >
+	select 	cd.cd_id
+	,		cd.cd
+	,		cd.cd_nm
+	,		cd.cd_sdt
+	,		cd.cd_edt
+	,		cd.cd_sort
+	,		cd_cls.cd_cls_id
+	,		cd_cls.cd_cls_nm
+	,		cd_cls.cd_cls_desc
+	from 	cd,
+			cd_cls
+	where 	cd_cls.cd_cls_id = cd.cd_cls_id
+	and		com_id = #{com_id}
+	and		cd_cls_id = #{cd_cls_id}
+	<if test="Cd != null" > 
+	and		cd = #{cd} 
+	</if>
+	<if test="CdNm != null" > 
+	and		cd_nm = #{CdNm} 
+	</if>
+</select>
+
+<insert id="insertCd" parameterType="able.service.admin.dbm.CdModel" >
+	insert into cd 
+	values(	#{CdId}  
+	,		#{CdClsId}
+	,		#{ComId}
+	,		#{Cd}
+	,		#{CdNm}
+	,		#{CdSdt}
+	,		#{CdEdt}
+	,		#{CdSort}
+	)
+</insert>
+
+<update id="updateCd" parameterType="able.service.admin.dbm.CdModel" >
+	update cd  
+	set	cd_cls_id 	= #{CdClsId}
+	,	com_id		= #{ComId}
+	,	cd 			= #{Cd}
+	,	cd_nm 		= #{CdNm}
+	,	cd_sdt		= #{CdSdt}
+	,	cd_edt 		= #{CdEdt}
+	,	cd_sort		= #{CdSort}
+	where cd_id = #{CdId}
+</update>
+
+<delete id="deleteCd" parameterType="able.service.admin.dbm.CdModel">
+	delete from cd 
+	where cd_id = #{CdId}
+</delete>
+
+<resultMap	id="CdClsResult" type="able.service.admin.dbm.CdClsModel">
+	<id 	column="cd_cls_id" 		property="CdClsId"	/>
+	<result	column="cd_cls_nm"		property="CdClsNm"	/>
+	<result	column="cd_cls_desc"	property="CdClsDesc"/>
+</resultMap>	
+
+<select id="selectCdCls" resultMap="CdClsResult" parameterType="able.service.admin.dbm.CdClsModel" >
+	select 	* 
+	from 	cd_cls
+	<where>
+	<if test="CdClsNm != null" > 
+	cd_cls_nm like '%' || #{cd_cls_nm} || '%' 
+	</if>
+	</where>
+</select>
+
+<insert id="insertCdCls" parameterType="able.service.admin.dbm.CdClsModel" >
+	insert into cd_cls
+	values(	#{CdClsId}
+	, 		#{CdClsNm}
+	,		#{CdClsDesc} 
+	)
+</insert>
+
+<update id="updateCdCls" parameterType="able.service.admin.dbm.CdClsModel" >
+	update 	cd_cls
+	set		CdClsNm		= #{CdClsId}
+	, 		CdClsDesc	= #{CdClsNm}
+	where 	cd_cls_id 	= #{CdClsId}
+</update>
+
+<delete id="deleteCdCls" parameterType="able.service.admin.dbm.CdClsModel" >
+	delete from cd_cls_id 
+	where cd_cls_id = #{CdClsId}
+</delete>
+
+
+<select id="selectPhone" resultType="able.service.admin.dbm.PhoneModel" >
+</select>
+
+
+</mapper>

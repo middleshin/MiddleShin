@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="dbInfo">
+
+<select id="selectColList" resultMap="resultColList" parameterType="String" >
+	select	table_name
+	,		column_name
+	,		data_type
+	,		nullable
+	from 	cols
+	where	table_name = #{table_name}  	
+</select>
+
+<resultMap 	id="resultColList" type="able.frame.dbm.ColListModel">
+	<result	column="table_name"		property="tableName"/>
+	<result	column="column_name"	property="columnName"/>
+	<result	column="data_type"		property="dataType"/>
+	<result	column="nullable"		property="nullable"/>
+</resultMap>	
+
+<select id="selectSeqId" resultType="Long" >
+	select seqid.nextval
+	from dual	
+</select>
+
+
+</mapper>

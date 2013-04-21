@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<link REL="stylesheet" type="text/css" href="alleyStyle.css">
+<script type="text/javascript" src="./js/jquery-1.7.2.js"></script>
+
+<script type="text/javascript" >
+
+$(document).ready(function(){
+	
+	$("#close").click(function(event) {
+		$.closeFrame(); 
+	});
+	
+	$.openFrame = function(f_width, f_height, f_url){
+		// resize frame으로 구분하여야 한다. 
+		// 페이지 오픈 후 메인에 있는 resizeFrame(width, height)를 호출하여 본인의 크기 및 위치를 수정한다.
+		// 프레임이 오픈된 후 호출해야 하므로 frame내에서 메인함수를 호출한다. 
+		
+		// frame reset 
+		$("#popFrame").attr("src", f_url) ;
+		
+		$("#popFrame").height(f_height);
+		$("#popFrame").width(f_width);
+		
+		// 윈도우 스크롤바 없애기 
+		$("body").css('overflow', 'hidden');
+		
+		// 현재 보이는 화면 Blocking  
+		$("#baseDiv").show();
+		$("#baseDiv").animate( { position:'absolute', left:'0px', top:$(document).scrollTop() } );
+		
+		// 팝업 열기 
+		$("#popDiv").show();
+		$("#popDiv").animate( // 위치잡기  
+			{ 	position:'absolute', 
+				left:$(document).width()/2 - f_width/2, 
+				top:$(document).scrollTop() + $(window).height()/2 - f_height/2  
+			} 
+		);
+	}
+
+	$.closeFrame = function() {
+		// 팝업을 현재 스크롤 위치에 오픈한다. 
+		$("#baseDiv").hide();
+		$("#popDiv").hide();
+		$("body").css('overflow', 'auto');
+	}
+
+	$.resizeContent = function(h){
+		// resize content Box		
+		var hh 
+		if (h<600){hh=600;}else{hh = h;}; 
+		$("#contentBox").height(hh); 
+		$("#contentPage").height(hh);
+	} 
+}); 	
+</script>
+</head>
+
+<body>
+ 	<!--  Menu  Page -->
+	<div id="menuBox" >
+		<div style="text-align:center; ">
+			<img src = "./img/kk.jpg"  style="width:90%; height:90%; border:1px  solid grey ; margin-top:5%"  />
+		</div>
+
+		<div style="margin:10px; "> 
+			<a href="./employee/getEmpList.jsp" target="contentPage">사원관리(샘플)</a>
+			<p>
+			<a href="./serviceContract/corpListAll.html" target="contentPage">회사정보</a>
+			<p>
+			<a href="http://www.naver.com" target="contentPage">logout</a>
+		</div>
+	</div>
+
+	<!-- Content Page -->
+ 	<div id="contentBox" >	
+		<iframe id="contentPage" name="contentPage" src="./employee/getEmpList.jsp" ></iframe>
+	</div>
+
+	<!--  base white color backgrond div  -->
+	<div id="baseDiv"> </div>
+
+	<!--  Pop up Division  -->
+	<div id="popDiv" >
+		<iframe id="popFrame" name="popFrame" src="" ></iframe>
+	</div>
+</body>
+
+</html>

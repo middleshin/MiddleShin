@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+	<environments default="Alleys">
+		<environment id="Alleys">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+			 	<property name="poolMaximumActiveConnections" value="30" /> 
+			 	
+			 	<!-- **max connection이 늘어나면 속도가 빨라질까? --> 
+				
+				<property name="driver" value="oracle.jdbc.driver.OracleDriver" />
+
+				<property name="url" value="jdbc:oracle:thin:@218.236.10.162:1521:orcl" />
+				<property name="username" value="able" />
+				<property name="password" value="able" />
+
+			</dataSource>
+		</environment>
+	</environments>
+
+	<mappers>
+		<mapper resource="able/service/employee/dbm/employee.xml" />
+		<mapper resource="able/service/admin/dbm/admin.xml" />
+		<mapper resource="able/frame/dbm/frame.xml" />
+	</mappers>
+
+</configuration>
+

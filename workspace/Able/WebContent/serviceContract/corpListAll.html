@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<link REL="stylesheet" type="text/css" href="../workFrame.css">
+
+<script type="text/javascript" src="../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" >
+
+$(document).ready(function(){
+	
+	$("#delete").click(function(event) {
+		// delete table list gt(0)은 0보다 큰 element를 찾아서 지우는것. 
+		$("#dataTable tr:gt(0)").remove(); 
+		parent.$.resizeContent( $("body").height() + 100 );
+	}); 
+	
+	$("#retrieve").click(function(event) {
+		// 첫행을 남기고 모두 지운다. 	
+		$("#dataTable tr:gt(0)").remove();
+		
+		$.getJSON("../service.jsp", {ServiceName:"serviceContract.app.GetCorpList"}, function(data) {
+			//진짜 어렵당. json은 서버측에서 리턴하기 전에 Json Object명(EmpListAll)을 강제로 값을 넣어주는 것이다.
+			//alert(data.json[0].emp_nm);
+			$.each(data.json, function(key, value) {
+				var addRow = "";
+				addRow 	= "<tr>" 
+						+ "<td><a href='#'>" + value.corp_nm + "</a></td>"
+						+ "<td>" + value.corp_nation_cd + "</td>"
+						+ "<td>" + value.corp_anniversary + "</td>"
+						+ "<td>" + value.corp_license_no + "</td>"
+						+ "<td>" + value.corp_homepage_url + "</td>"
+						+ "<td>" + value.corp_lang_cd + "</td>"
+						+ "<td>" + value.corp_president_nm + "</td>"
+						+ "<td>" + value.corp_id + "</td>"
+						+ "</tr>" ; 
+
+				$("#dataTable tr:last").after(addRow);
+				
+				// emp_id column에 상세 페이지를 오픈하기 위하여 Click 이벤트에 함수를 Bind한다. bind 대신에 on를 사용해도 된다.  
+				$("#dataTable tr:last td:first-child").on("click",function(){
+					// width & height & url 
+					parent.$.openFrame(1000, 500, "./corpUpdate.jsp?corp_id=" + value.corp_id);  
+				});
+			}) ;
+			
+			// resize parent body 			
+			parent.$.resizeContent( $("body").height() + 100 ); 
+			
+ 		});
+
+	}); 	 // end of retrieve 
+
+});
+
+</script>          
+ 
+</head>
+<body>
+	<div id="header" >
+		회사정보 
+	</div>
+	
+<div style="text-align:right; ">
+	<button id="retrieve" type="button" >Retrieve</button>
+	<button id="delete" type="button" >New</button>
+</div>
+
+<table id="dataTable" style="border:0;">
+	<tr align=center valign=top bgcolor=grey >
+		<th width="200">회사명</th>
+		<th width="200">국가코드</th>
+		<th width="200">창립일</th>
+		<th width="200">법인번호</th>
+		<th width="200">홈페이지URL</th>
+		<th width="200">언어코드</th>
+		<th width="200">대표자성명</th>
+		<th width="200">회사ID</th>		
+	</tr>
+</table>
+
+</body>
+
+
+ 
+
+</html>

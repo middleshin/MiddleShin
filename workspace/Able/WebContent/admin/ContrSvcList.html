@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>계약정보조회</title>
+
+<link REL="stylesheet" type="text/css" href="../alleyStyle.css">
+</head>
+<body>
+	<div id="header" >
+	계약정보관리 
+	</div>
+	
+	<div style="text-align:right; ">
+		<button id="retrieve" type="button" >retrieve Data</button>
+		<button id="delete" type="button" >delete Data</button>
+	</div>
+	
+	<table id="dataTable" >
+		<tr align=center valign=top bgcolor=grey >
+			<th>SEQ</th> 
+			<th>회사명</th>
+			<th>계약일</th>
+			<th>계약명</th>
+			<th>계약종료일</th>
+			<th>서비스명</th>
+			<th>서비스설명</th>
+		</tr>
+	</table>
+</body>
+
+<script type="text/javascript" src="../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" >
+
+$(document).ready(function(){
+	
+	$("#retrieve").click(function(event) {
+		
+		// dataTable에서 0보다 큰 tr class들을 지운다.
+		// 첫 행만 남기고 모두 지운다. 
+		$("#dataTable tr:gt(0)").remove();
+		
+		$.getJSON("../service.jsp", {serviceName:"admin.GetCntrSvcList"}, function(data) {
+			$.each(data.json, function(key, value) {
+				var addRow = "";
+				addRow 	= "<tr>" 
+							+ "<td><a href='#'>" + value.cntrModel.cntrId + "</a></td>"
+							+ "<td>" + value.cntrModel.comModel.comLocNm + "</td>"
+							+ "<td>" + value.cntrModel.cntrSignDt+ "</td>"
+							+ "<td>" + value.cntrModel.cntrNm + "</td>"
+							+ "<td>" + value.cntrModel.cntrEdt + "</td>"
+							+ "<td>" + value.svcModel.svcNm + "</td>"
+							+ "<td>" + value.svcModel.svcDesc+ "</td>"
+							+ "</tr>" ; 
+							
+				$("#dataTable tr:last").after(addRow);
+ 
+				$("#dataTable tr:last td:first-child").bind("click",function(){
+					parent.$.openFrame(1000, 500, "./UpdateCntr.jsp?emp_id=" + value.emp_id);  
+				});
+			}) ;
+			parent.$.resizeContent( $("body").height() + 100 ); 
+ 		});
+	}); 	 // end of retrieve 
+});
+
+$("#delete").click(function(event) {
+	// delete table list gt(0)은 0보다 큰 element를 찾아서 지우는것. 
+	$("#dataTable tr:gt(0)").remove(); 
+	parent.$.resizeContent( $("body").height() + 100 );
+}); 
+
+
+
+</script>          
+ 
+
+ 
+
+</html>

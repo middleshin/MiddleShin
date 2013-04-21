@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>View 조회</title>
+
+<link REL="stylesheet" type="text/css" href="../alleyStyle.css">
+<script type="text/javascript" src="../js/jquery-1.7.2.js"></script>
+</head>
+
+<body>
+<div style="border:1px solid grey; height:200px; margin:1px; overflow:auto" >
+
+	<table>
+	<tr>
+		<td>
+			<form id="formVuNm" >
+			<input type="hidden" name="serviceName" value="admin.SelectVuByNm" >
+			View 찾기: <input type="text" id="vuNm"  name="vuNm" >
+			<button id="retrieveVu" type="submit" >조회</button>
+			<button id="insertVu" type="button" >등록</button>
+			</form>
+		</td>
+	</tr>
+	</table>
+		
+	<table id="vuList" >
+		<tr align=center valign=top bgcolor=grey >
+			<th width="50px">No.</th> 
+			<th width="200px">View 명</th>
+			<th width="100px">등록일</th>
+			<th width="300px">View File Path</th>
+			<th width="300px">설명</th>
+		</tr>
+	</table>
+</div>
+</body>
+
+<script type="text/javascript" >
+
+$(document).ready(function(){
+	$("#insertVu").click(function(event) {
+		parent.openFrame(event, 500, 350, "./admin/ViewManager.jsp");
+	}); 
+
+//	$("#retrieveVu").click(function(event){
+		// $("#formVuNm").submit(); 
+//	});
+
+	$("#formVuNm").submit(function(event){
+		retrieve(); 
+		return false; // 이게 없으면 페이지가 Reset된다. 
+	});
+});
+
+function retrieve(){
+	$("#vuList tr:gt(0)").remove(); // 조회전에 첫행을 제외하고 Reset 
+	$.getJSON("../service.jsp", $("#formVuNm").serialize(), function(json) {
+		if(json.code < 0){
+			// error 처리 
+			alert(json.message);
+			return false; 
+		}
+		$.each(json.data, function(key, value) {
+			var addRow = "";
+			addRow 	= "<tr >" 
+						+ "<td>" + (key + 1)  + "</td>"
+						+ "<td id='col_string'><a href='#'>" + value.vuNm + "</a></td>"
+						+ "<td>" + value.vuRegDt + "</td>"
+						+ "<td id='col_string'>" + value.vuFilePath+ "</td>"
+						+ "<td id='col_string'>" + value.vuNote + "</td>"
+						+ "</tr>" ; 
+
+			$("#vuList tr:last").after(addRow);
+			
+			// 팝업 윈도우 링크 Setting 
+			$("#vuList tr:last td:nth-child(2)").bind("click",function(event){
+				parent.openFrame(event, 500, 350, "./admin/ViewManager.jsp?vuId=" + value.vuId);
+				return false; 
+			});
+		}) ;
+		parent.resizeContent( $("body").height() ); 
+	});
+}
+	
+
+</script>          
+
+</html>

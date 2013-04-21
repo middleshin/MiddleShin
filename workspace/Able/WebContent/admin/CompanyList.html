@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>회사정보 조회</title>
+
+<link REL="stylesheet" type="text/css" href="../alleyStyle.css">
+
+</head>
+
+<body>
+
+<table>
+<tr>
+	<td>
+		<form id="searchComNm" >
+		<input type="hidden" name="serviceName" value="admin.SelectComById" >
+		
+		회사찾기: <input type="text" id="comLocNm"  name="comLocNm" >
+		</form>
+	</td>
+	<td>
+		<button id="retrieveCom" type="button" >조회</button>
+		<button id="insertCom" type="button" >등록</button>
+	</td>
+</tr>
+</table>
+
+<div style="overflow:auto; margin:3px;">
+	<table id="comList" >
+		<tr align=center valign=top bgcolor=grey >
+			<th width="50px">No.</th> 
+			<th width="200px">회사명</th>
+			<th width="100px">기념일</th>
+			<th width="200px">법인번호</th>
+			<th width="250px">영문명</th>
+			<th width="100px">대표자</th>
+			<th width="500px">설명</th>
+		</tr>
+	</table>
+</div>
+</body>
+
+<script type="text/javascript" src="../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" >
+
+$(document).ready(function(){
+	parent.resizeContent( $("body").height());
+	
+	$("#insertCom").click(function(event) {
+		parent.openFrame(event, 500, 350, "./admin/UpdateCom.jsp?comId=" + "new");
+		// delete table list gt(0)은 0보다 큰 element를 찾아서 지우는것. 
+		// $("#dataTable tr:gt(0)").remove(); 
+		// parent.$.resizeContent( $("body").height());
+	}); 
+
+	$("#retrieveCom").click(function(event){
+		$("#searchComNm").submit();  
+	});
+
+	$("#searchComNm").submit(function(event){
+		retrieve(); 
+		return false; // 이게 없으면 페이지가 Reset된다. 
+	});
+});
+
+function retrieve(){
+	// comList에서 0보다 큰 tr class들을 지운다.
+	// 첫 행만 남기고 모두 지운다. 
+	$("#comList tr:gt(0)").remove();
+	$.getJSON("../service.jsp", $("#searchComNm").serialize(), function(json) {
+
+		if(json.code < 0){
+			// error 처리 
+			alert(json.message);
+			return false; 
+		}
+		
+		$.each(json.data, function(key, value) {
+		
+			var addRow = "";
+			addRow 	= "<tr >" 
+						+ "<td>" + (key + 1)  + "</td>"
+						+ "<td id='col_string'><a href='#'>" + value.comLocNm + "</a></td>"
+						+ "<td>" + value.comAnnivDt + "</td>"
+						+ "<td>" + value.comBizNo + "</td>"
+						+ "<td id='col_string'>" + value.comEngNm + "</td>"
+						+ "<td id='col_string'>" + value.comCeoNm + "</td>"
+						+ "<td id='col_string'>" + value.comNote + "</td>"
+						+ "</tr>" ; 
+
+			$("#comList tr:last").after(addRow);
+			
+			// 팝업 윈도우 링크 Setting 
+			$("#comList tr:last td:nth-child(2)").bind("click",function(event){
+
+				parent.openFrame(event, 500, 350, "./admin/ComView.jsp?comId=" + value.comId);
+				return false; 
+			});
+		}) ;
+		parent.resizeContent( $("body").height() ); 
+	});
+}
+	
+
+</script>          
+
+</html>

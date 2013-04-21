@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>계약정보조회</title>
+<!--  
+	계약정보를 관리한다.
+	회사를 먼저 선택하고, 해당 회사의 계약건을 조회한다. 
+	조회된 계약건에 등록된 서비스를 관리한다.  
+ -->
+<link REL="stylesheet" type="text/css" href="../alleyStyle.css">
+
+</head>
+
+<body>
+	<div style="border:1px solid grey; height:200px; margin:1px; overflow:auto" >
+	<!--  회사정보 조회  -->
+	<form id="searchComNm" >
+		<!--  회사정보를 조회하기 위한 서비스명을 정의한다.  -->
+		<input type="hidden" name="serviceName" value="admin.SelectComByNm" >
+		<table>
+		<tr>
+			<td>
+				회사찾기: <input type="text" id="comLocNm"  name="comLocNm" >
+			</td>
+			<td>
+				<button id="selectCom" type="submit" >조회</button>
+			</td>
+			<td>	
+				<button id="insertCom" type="button" >회사등록</button>
+			</td>
+		</tr>
+		</table>
+	</form>
+		<table id="comTable" >
+			<tr align=center valign=top bgcolor=grey >
+				<th width="20px">No</th> 
+				<th width="200px">회사명</th>
+				<th width="80px">기념일</th>
+				<th width="100px">법인번호</th>
+				<th width="250px">영문명</th>
+				<th width="100px">대표자</th>
+				<th width="500px">설명</th>
+				<th style="display:none;">ID</th>
+			</tr>
+		</table>
+	</div>
+
+	<div style="border:1px solid grey; height:400px; margin:1px; overflow:auto" >
+		<table>
+		<tr>
+			<td><button id="insertContr" type="button" >신규계약등록</button></td>
+		</tr>
+		</table>
+
+		<table id="contrTable" >
+			<tr align=center valign=top bgcolor=grey >
+				<th width="20px">No</th>
+				<th width="200px">회사명</th>
+				<th width="100px">계약일</th>
+				<th width="400px">계약명</th>
+				<th width="100px">계약시작일</th>
+				<th width="100px">계약종료일</th>
+				<th width="400px">계약설명</th>
+			</tr>
+		</table>
+	</div>
+
+</body>
+
+<script type="text/javascript" src="../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" >
+
+function retrieveCom(){
+	// 회사조회 
+	// comList에서 0보다 큰 tr class들을 지운다.
+	// 첫 행만 남기고 모두 지운다. 
+	$("#comTable tr:gt(0)").remove();
+	$.getJSON("../service.jsp", $("#searchComNm").serialize(), function(json) {
+		if(json.code < 0){
+			// error 처리 
+			alert(json.message);
+			return false; 
+		}
+		$.each(json.data, function(key, value) {
+			var addRow = "";
+			addRow 	= "<tr>" 
+						+ "<td>" + (key+1)  + "</td>"
+						+ "<td id='col_string'><a href='#'>" + value.comLocNm + "</a></td>"
+						+ "<td>" + value.comAnnivDt + "</td>"
+						+ "<td>" + value.comBizNo + "</td>"
+						+ "<td id='col_string'>" + value.comEngNm + "</td>"
+						+ "<td id='col_string'>" + value.comCeoNm + "</td>"
+						+ "<td id='col_string'>" + value.comNote + "</td>"
+						+ "<td style='display:none;'>" + value.comId + "</td>"
+						+ "</tr>" ; 
+			$("#comTable tr:last").after(addRow);
+			// 팝업 윈도우 링크 Setting 
+			$("#comTable tr:last td:nth-child(2)").bind("click",function(event){
+				parent.openFrame(event, 500, 350, "./admin/CompanyManager.jsp?comId=" + value.comId);
+			});
+		}) ;
+		
+		parent.resizeContent( $("body").height() );
+		
+		// bind clicked event
+		// ready 안에 있는 경우에는 페이지 로드 될때 ROw가 없으므로 바인드되는 행이 없다. 
+		// row를 만든 후에 바인드 해야 함수가 작동한다. 
+		$("#comTable tr").bind("click",function(event){
+			///////////////////////////////////////////////
+			// to do list 
+			// table bind and seleted table row index
+			// regenerated this bind function 
+			// alert(this.rowIndex); 
+			////////////////////////////////////////////////////
+			
+			if(this.rowIndex < 1){
+				return false; 
+			}
+			
+			// 회사테이블에서 첫행만 빼고 전부 색 변경 
+			// jquery Selector 참조 
+			$('#comTable tr:not(:first)').css('background-color', 'white'); // 첫행은 그냥둔다. 제목이니깐...
+			$(this).css('background-color', 'yellow');
+
+			// select row 의 컬럼값 가져오기 (8번째 칼럼값 가져오기)
+			selectedComId  = $(this).children("td:nth-child(8)").text();
+			retrieveContr(selectedComId); 
+
+/*
+			$("#insertContr").bind("click", function(event){
+				alert("row id : " + this.rowIndex); 
+				return false; 
+			}); 
+*/
+			$("#insertContr").bind("click", {"selectedComId":selectedComId}, function(event){
+				// 전역변수 대신 이벤트에 추가 파라메터를 넘겨주었다. 
+				// 바인드 시 파라메터를 정의할 수 있다. 
+				// alert("row id : " + selectedComId); 
+				return false; 
+			}); 
+			
+			// 선택된 행에 대하여 계약정보 조회하기 
+			return false;
+		});
+		
+	});
+}
+
+function retrieveContr(comId){
+
+	// dataTable에서 0보다 큰 tr class들을 지운다.
+	// 첫 행만 남기고 모두 지운다. 
+	$("#contrTable tr:gt(0)").remove();
+	
+	$.getJSON("../service.jsp", {serviceName:"admin.SelectContrByComId", "comId":comId}, function(json) {
+		$.each(json.data, function(key, value) {
+			var addRow = "";
+			addRow 	= "<tr>" 
+						+ "<td>" + (key+1) + "</a></td>"
+						+ "<td>" + value.comModel.comLocNm + "</td>"
+						+ "<td>" + value.contrSignDt+ "</td>"
+						+ "<td id='col_string'><a href='#'>" + value.contrNm + "</a></td>"						
+						+ "<td>" + value.contrStartDt + "</td>"
+						+ "<td>" + value.contrCloseDt + "</td>"
+						+ "<td>" + value.contrNote + "</td>"
+						+ "</tr>" ; 
+						
+			$("#contrTable tr:last").after(addRow);
+
+			$("#contrTable tr:last td:nth-child(4)").bind("click",function(event){ 
+				parent.openFrame(event, 500, 350, "./admin/ContractManager.jsp?comId=" + value.comId + "&contrId=" + value.contrId) ;
+				return false;  
+			});
+		});
+		
+		parent.$.resizeContent( $("body").height() + 100 );
+		
+	});
+}
+
+$(document).ready(function(){
+	$("#searchComNm").submit(function(event){
+		retrieveCom(); 
+		return false; // 이게 없으면 페이지가 Reset된다. 
+	});
+});
+
+
+$("#insertContr").click(function(event) {
+	
+	if((typeof selectedComId == "undefined")){
+		alert("선택된 회사가 없습니다.");
+		return false 
+	}
+	else {
+		parent.openFrame(event, 500, 350, "./admin/ContractManager.jsp?comId=" + selectedComId);
+	}
+}); 
+
+
+$("#insertCom").click(function(event) {
+	parent.openFrame(event, 500, 350, "./admin/CompanyManager.jsp?comId=" + "new");
+}); 
+
+$("#delete").click(function(event) {
+	// delete table list gt(0)은 0보다 큰 element를 찾아서 지우는것. 
+	$("#dataTable tr:gt(0)").remove(); 
+	parent.$.resizeContent( $("body").height() + 100 );
+}); 
+
+</script>          
+
+</html>
+

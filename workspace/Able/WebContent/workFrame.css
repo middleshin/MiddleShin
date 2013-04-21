@@ -1,0 +1,26 @@
+th {
+	font-family: Arial ; 
+	font-size: 9pt ; 
+	align:center ;
+	vertical-align:top ;
+	bgcolor:silver ;
+	vertical-align:bottom;
+	color:white ;  
+	height:18px;
+}
+
+tr {
+	font-family: arial ; 
+	font-size: 9pt ;
+	text-align:center ; 
+	vertical-align:bottom;
+	bgcolor:black ;
+}
+
+#header {
+	text-align:center;
+	line-height:22px;  
+	background-color:white;  
+	width:100% ; 
+}
+
