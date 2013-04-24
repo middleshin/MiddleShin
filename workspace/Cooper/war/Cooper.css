@@ -16,11 +16,25 @@ h1 {
 }
 
 .gwt-HorizontalPanel{
+	background-color: grey;
 }
 
 /** Most GWT widgets already have a style name defined */
 .gwt-DialogBox {
   width: 400px;
+}
+
+.gwt-Button  { 
+	font-size: 150%; 
+	color: yellow; 
+}
+
+.gwt-DecoratorPanel{ 
+	background-color: yellow; 
+}
+
+.gwt-LayoutPanel{ 
+	background-color: grey; 
 }
 
 .dialogVPanel {

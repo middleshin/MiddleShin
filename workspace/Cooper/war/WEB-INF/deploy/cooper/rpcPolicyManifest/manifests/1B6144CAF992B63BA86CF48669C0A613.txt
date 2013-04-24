@@ -1,2 +1,0 @@
-serviceClass: com.alignfactory.cooper.client.GreetingService
-path: 931A6C8AC2D7D52A6FFEFAF2744497C3.gwt.rpc

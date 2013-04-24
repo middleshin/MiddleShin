@@ -8,7 +8,7 @@
   <!-- Servlets -->
   <servlet>
     <servlet-name>greetServlet</servlet-name>
-    <servlet-class>com.alignfactory.cooper.server.GreetingServiceImpl</servlet-class>
+    <servlet-class>com.cooper.server.GreetingServiceImpl</servlet-class>
   </servlet>
   
   <servlet-mapping>
