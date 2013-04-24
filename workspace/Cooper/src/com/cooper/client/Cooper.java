@@ -136,7 +136,5 @@ public class Cooper implements EntryPoint {
 
 	      // Add the widgets to the root panel.
 	      RootLayoutPanel.get().add(decoratorPanel);
-
-	      
 	} 
 }
