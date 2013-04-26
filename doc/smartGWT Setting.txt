@@ -1,0 +1,11 @@
+1. Properties of [project] > Java Build Path > add smartgwt.jar & smartgwt-skins.jar
+2. src > [project package] > [projectname].gwt.xml 수정 
+
+	<inherits name="com.google.*"/> 는 모두 삭세 
+
+	<inherits name="com.smartgwt.SmartGwt"/> 를 추가 입력한다. 
+
+3. 끝 
+
+
+
