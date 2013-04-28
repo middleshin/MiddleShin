@@ -16,10 +16,14 @@ package com.cooper.client;
  */  
   
 import com.smartgwt.client.types.Alignment;   
+import com.smartgwt.client.types.Side;
   
 import com.smartgwt.client.widgets.Label;   
 import com.smartgwt.client.widgets.layout.HLayout;   
 import com.smartgwt.client.widgets.layout.VLayout;   
+import com.smartgwt.client.widgets.tab.Tab;
+import com.smartgwt.client.widgets.tab.TabSet;
+import com.smartgwt.client.widgets.tree.TreeGrid;
   
 import com.google.gwt.core.client.EntryPoint;   
   
@@ -27,12 +31,9 @@ public class Cooper implements EntryPoint {
   
     public void onModuleLoad() {   
   
-        HLayout layout = new HLayout();   
-        layout.setWidth100();   
-        layout.setHeight100();   
-        layout.setMembersMargin(5);   
-        layout.setLayoutMargin(5);
-        
+/********************************************
+ *  Left Menu Frame Setting 
+ ********************************************/ 
         VLayout vLayout = new VLayout();   
         vLayout.setWidth(200);   
         vLayout.setMembersMargin(3);   
@@ -40,44 +41,66 @@ public class Cooper implements EntryPoint {
         vLayout.setShowEdges(true);   
         vLayout.setEdgeSize(1);
         
-        // menu title 
+        // menu title Place
         vLayout.addMember(new BlueBox(null, 30, "Cooper"));
-        // login user 
+        
+        // login user Place 
         vLayout.addMember(new BlueBox((String)null, "120", "Hellow User's Info"));
 
-        // menu list 
-
-        HLayout menuLayout = new HLayout(); 
+        // Set Menu 
+        ContentMenu contentMenu = new ContentMenu();
         
-        menuLayout.setWidth100();   
-        menuLayout.setHeight100();   
-        menuLayout.setShowEdges(true);   
-        menuLayout.setEdgeSize(2);
-        
-        final ContentMenu menu = new ContentMenu();
-        
+        TreeGrid menu = contentMenu.getMenu();  
         menu.setHeight100();
         menu.setWidth100();
-        menuLayout.addMember(menu);
-        vLayout.addMember(menuLayout);
-
-        // foot message 
+        vLayout.addMember(menu);
+        
+        // foot Title Place  
         vLayout.addMember(new BlueBox(null, 30, "Cooper.co.kr"));
         
-        layout.addMember(vLayout);   
-  
+/*********************************
+ * Right Content Frame Setting 
+ ********************************/
         HLayout hLayout = new HLayout();   
         hLayout.setShowEdges(true);   
-        // hLayout.setHeight(150);   
         hLayout.setMembersMargin(5);   
         hLayout.setLayoutMargin(1);
         hLayout.setEdgeSize(1);
         
-        //hLayout.addMember(new BlueBox(50, (Integer) null, "width 50"));   
-        //hLayout.addMember(new BlueBox("*", null, "width *"));   
-        //hLayout.addMember(new BlueBox("30%", null, "width 30%"));   
-        layout.addMember(hLayout);   
+        final TabSet tabSet = new TabSet();   
+        tabSet.setTabBarPosition(Side.TOP);   
+        //tabSet.setWidth100();   
+        //tabSet.setHeight100();   
   
+        Tab tTab1 = new Tab("Blue") ; // , "pieces/16/pawn_blue.png");   
+        //Img tImg1 = new Img("pieces/48/pawn_blue.png", 48, 48);   
+        //tTab1.setPane(tImg1);   
+  
+        Tab tTab2 = new Tab("Green") ; //, "pieces/16/pawn_green.png");   
+        //Img tImg2 = new Img("pieces/48/pawn_green.png", 48, 48);   
+        //tTab2.setPane(tImg2);   
+  
+        tabSet.addTab(tTab1);   
+        tabSet.addTab(tTab2);   
+
+        
+        hLayout.addMember(tabSet); 
+
+        // TabSet 
+        contentMenu.setTabSet(tabSet); 
+        
+ /***************************** 
+ * main Frame Create
+ *****************************/ 
+        HLayout layout = new HLayout();   
+        layout.setWidth100();   
+        layout.setHeight100();   
+        layout.setMembersMargin(5);   
+        layout.setLayoutMargin(5);
+
+        layout.addMember(vLayout);   
+        layout.addMember(hLayout);   
+
         layout.draw();   
     }   
   

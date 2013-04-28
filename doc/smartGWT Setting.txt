@@ -9,3 +9,7 @@
 
 
 
+
+
+ObjectFactory - create Object by STring
+canvas - Object newInstance(String className)
