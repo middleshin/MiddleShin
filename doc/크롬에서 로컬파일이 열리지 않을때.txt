@@ -1,0 +1,9 @@
+크롬 폴더에서 
+
+chrome.exe --disable-web-security 
+
+을 실행하면 된다. 
+
+
+
+

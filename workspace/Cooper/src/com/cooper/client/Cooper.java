@@ -48,11 +48,10 @@ public class Cooper implements EntryPoint {
         vLayout.addMember(new BlueBox((String)null, "120", "Hellow User's Info"));
 
         // Set Menu 
-        ContentMenu contentMenu = new ContentMenu();
-        
+        ContentLeft contentMenu = new ContentLeft();
         TreeGrid menu = contentMenu.getMenu();  
-        menu.setHeight100();
-        menu.setWidth100();
+        //menu.setHeight100();
+        // menu.setWidth100();
         vLayout.addMember(menu);
         
         // foot Title Place  
@@ -69,25 +68,13 @@ public class Cooper implements EntryPoint {
         
         final TabSet tabSet = new TabSet();   
         tabSet.setTabBarPosition(Side.TOP);   
-        //tabSet.setWidth100();   
-        //tabSet.setHeight100();   
-  
-        Tab tTab1 = new Tab("Blue") ; // , "pieces/16/pawn_blue.png");   
-        //Img tImg1 = new Img("pieces/48/pawn_blue.png", 48, 48);   
-        //tTab1.setPane(tImg1);   
-  
-        Tab tTab2 = new Tab("Green") ; //, "pieces/16/pawn_green.png");   
-        //Img tImg2 = new Img("pieces/48/pawn_green.png", 48, 48);   
-        //tTab2.setPane(tImg2);   
-  
+        Tab tTab1 = new Tab("New") ;    
         tabSet.addTab(tTab1);   
-        tabSet.addTab(tTab2);   
-
-        
         hLayout.addMember(tabSet); 
 
         // TabSet 
         contentMenu.setTabSet(tabSet); 
+        tTab1.setPane(new BlueBox(100, 200, "dddd"));
         
  /***************************** 
  * main Frame Create
