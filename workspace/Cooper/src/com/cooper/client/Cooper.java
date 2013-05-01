@@ -17,6 +17,7 @@ package com.cooper.client;
   
 import com.smartgwt.client.types.Alignment;   
 import com.smartgwt.client.types.Side;
+import com.smartgwt.client.util.SC;
   
 import com.smartgwt.client.widgets.Label;   
 import com.smartgwt.client.widgets.layout.HLayout;   
@@ -28,7 +29,26 @@ import com.smartgwt.client.widgets.tree.TreeGrid;
 import com.google.gwt.core.client.EntryPoint;   
   
 public class Cooper implements EntryPoint {   
-  
+	
+	final static TabSet tabSet = new TabSet();
+	
+	
+	public static void addTab(String msg){
+		//SC.say(msg); 
+		 
+		tabSet.clear(); 
+		tabSet.redraw(); 
+		
+		Tab tab = new Tab(msg); 
+		LayTest lay = new LayTest();
+		 
+		 tab.setPane(lay.getLayout()); 
+		 tabSet.addTab(tab);
+		 
+		 tabSet.redraw(); 
+	}
+	
+	
     public void onModuleLoad() {   
   
 /********************************************
@@ -66,7 +86,6 @@ public class Cooper implements EntryPoint {
         hLayout.setLayoutMargin(1);
         hLayout.setEdgeSize(1);
         
-        final TabSet tabSet = new TabSet();   
         tabSet.setTabBarPosition(Side.TOP);   
         Tab tTab1 = new Tab("New") ;    
         tabSet.addTab(tTab1);   

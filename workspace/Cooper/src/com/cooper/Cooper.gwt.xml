@@ -4,6 +4,9 @@
 <module rename-to='cooper'>
 	<inherits name="com.smartgwt.SmartGwt"/>
 	<entry-point class='com.cooper.client.Cooper'/>
+	
+	<set-property name="user.agent" value="ie9"/>
+	
 	<source path='client'/>
 	<source path='shared'/>
 </module>
