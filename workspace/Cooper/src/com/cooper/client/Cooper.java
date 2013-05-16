@@ -17,14 +17,12 @@ package com.cooper.client;
 
 import com.smartgwt.client.types.Alignment;   
 import com.smartgwt.client.types.Side;
-import com.smartgwt.client.widgets.Label;   
-import com.smartgwt.client.widgets.layout.HLayout;   
-
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;   
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
 import com.smartgwt.client.widgets.tree.TreeGrid;
-
 import com.google.gwt.core.client.EntryPoint;   
 
 public class Cooper implements EntryPoint {   
@@ -46,11 +44,11 @@ public class Cooper implements EntryPoint {
 		/********************************************
 		 *  Left Menu Frame Setting 
 		 ********************************************/ 
-		VLayout vLayout = new VLayout();   
-		vLayout.setWidth(200);   
-		vLayout.setMembersMargin(3);   
-		vLayout.setLayoutMargin(5);   
-		vLayout.setShowEdges(true);   
+		VLayout vLayout = new VLayout();
+		vLayout.setWidth(200);
+		vLayout.setMembersMargin(3);
+		vLayout.setLayoutMargin(5);
+		vLayout.setShowEdges(true);
 		vLayout.setEdgeSize(1);
 
 		// menu title Place
