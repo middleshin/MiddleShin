@@ -30,6 +30,11 @@ public class Cooper implements EntryPoint {
 	final static TabSet tabSet = new TabSet();
 
 
+	/*
+	 * 이제 멀 어찌해야 하는가? 
+	 * 
+	 */
+	
 	public static void addTab(String msg){
 		
 		TabOne t = new TabOne(msg);
